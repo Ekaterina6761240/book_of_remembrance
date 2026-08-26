@@ -1,0 +1,7 @@
+.header { display: flex; width: 100%; min-width: 760px; height: 39px; flex: 0 0 39px; align-items: center; justify-content: space-between; padding: 10px 20px; background: #fff; }
+.left { display: flex; align-items: center; gap: 56px; }
+.logoLink, .logo { display: block; width: 165px; height: 19px; }
+.actions { display: flex; align-items: center; gap: 20px; }
+.action { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 0; border: 0; background: transparent; color: #949494; cursor: pointer; font-size: 12px; font-weight: 500; line-height: 1.1; text-decoration: none; white-space: nowrap; }
+.action:disabled { cursor: wait; opacity: 0.6; }
+.action:hover { color: #434343; }

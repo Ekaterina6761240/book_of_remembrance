@@ -1,0 +1,5 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { font-family: "Golos Text", Arial, sans-serif; color-scheme: light; }
+body { min-width: 320px; min-height: 100vh; margin: 0; }
+a { color: inherit; }
+button, input, textarea, select { font: inherit; }

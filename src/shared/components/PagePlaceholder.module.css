@@ -1,0 +1,46 @@
+.page {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  min-height: 100%;
+  padding: 32px;
+}
+
+.label {
+  margin: 0;
+  color: #5f6b7a;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #1d2939;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.description,
+.status {
+  max-width: 720px;
+  margin: 0;
+  color: #475467;
+  line-height: 1.6;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.link {
+  color: #175cd3;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .page { padding: 20px; }
+  .title { font-size: 26px; }
+}
