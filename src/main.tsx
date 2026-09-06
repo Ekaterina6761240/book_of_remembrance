@@ -13,6 +13,8 @@ if (!rootElement) {
   throw new Error('Root element was not found');
 }
 
+rootElement.classList.add('book-of-remembrance-root');
+
 createRoot(rootElement).render(
   <StrictMode>
     <AppProviders>
