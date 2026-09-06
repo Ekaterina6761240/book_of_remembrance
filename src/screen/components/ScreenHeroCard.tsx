@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '../../shared/constants/routes';
 import type { Hero } from '../../shared/types';
 import { getHeroFullName } from '../utils/heroes';
+import { guardScreenLinkNavigation } from '../utils/navigationGuard';
 import styles from './ScreenHeroCard.module.css';
 
 type ScreenHeroCardProps = {
@@ -31,6 +32,7 @@ export function ScreenHeroCard({ hero, isPressed, isActive, onPressStart, onPres
       data-active={isActive || undefined}
       to={`${ROUTES.screenHeroes}/${hero.id}`}
       aria-label={fullName}
+      onClick={guardScreenLinkNavigation}
       onFocus={() => onActivate(hero.id)}
       onPointerDown={() => {
         onActivate(hero.id);
@@ -43,7 +45,7 @@ export function ScreenHeroCard({ hero, isPressed, isActive, onPressStart, onPres
     >
       <span className={styles.portrait}>
         {imageUrl && !hasImageError ? (
-          <img src={imageUrl} alt={`Фото: ${fullName}`} onError={() => setHasImageError(true)} />
+          <img src={imageUrl} alt={`Фото: ${fullName}`} draggable={false} onError={() => setHasImageError(true)} />
         ) : (
           <span className={styles.imageFallback} aria-hidden="true">
             <UserRound strokeWidth={1} />

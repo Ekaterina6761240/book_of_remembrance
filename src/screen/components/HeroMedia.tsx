@@ -15,7 +15,7 @@ export function HeroMedia({ media, index, onIndexChange, onOpen }: Props) {
   return <section className={styles.media} aria-label="Фотографии героя">
     {current && !failed ? (
       <button className={styles.photoButton} type="button" onClick={onOpen} aria-label="Открыть фотографию на весь экран">
-        <img src={current.url} alt={current.name || 'Фотография героя'} onError={() => setFailed(true)} />
+        <img src={current.url} alt={current.name || 'Фотография героя'} draggable={false} onError={() => setFailed(true)} />
       </button>
     ) : <div className={styles.placeholder}><UserRound aria-hidden="true" /><span>Фотография отсутствует</span></div>}
     {media.length > 0 && <div className={styles.controls}>

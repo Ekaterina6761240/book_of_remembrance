@@ -6,6 +6,7 @@ import type { District } from '../../shared/types';
 import districtPeople from '../assets/district-people.svg';
 import { DistrictPicker } from '../components/DistrictPicker';
 import { useScreenDistricts } from '../hooks/useScreenDistricts';
+import { acquireScreenNavigation, guardScreenLinkNavigation } from '../utils/navigationGuard';
 import styles from './ScreenDistrictsPage.module.css';
 
 export function ScreenDistrictsPage() {
@@ -26,14 +27,16 @@ export function ScreenDistrictsPage() {
   }, [districts]);
 
   const openDistrict = (district: District) => {
-    navigate(`${ROUTES.screenHeroes}?district=${district.id}`);
+    if (acquireScreenNavigation()) {
+      navigate(`${ROUTES.screenHeroes}?district=${district.id}`);
+    }
   };
 
   return (
     <main className={styles.page}>
-      <img className={styles.people} src={districtPeople} alt="" aria-hidden="true" />
+      <img className={styles.people} src={districtPeople} alt="" aria-hidden="true" draggable={false} />
 
-      <Link className={styles.backLink} to={ROUTES.screen} aria-label="Вернуться на стартовый экран">
+      <Link className={styles.backLink} to={ROUTES.screen} onClick={guardScreenLinkNavigation} aria-label="Вернуться на стартовый экран">
         <span className={styles.backIcon}><ArrowLeft aria-hidden="true" strokeWidth={1.35} /></span>
         <span>Назад</span>
       </Link>

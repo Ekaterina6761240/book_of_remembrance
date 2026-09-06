@@ -7,6 +7,7 @@ import { ScreenHeroCard } from '../components/ScreenHeroCard';
 import { VirtualKeyboard } from '../components/VirtualKeyboard';
 import { useScreenHeroes } from '../hooks/useScreenHeroes';
 import { filterAndSortHeroes, normalizeRussianText, RUSSIAN_ALPHABET } from '../utils/heroes';
+import { guardScreenLinkNavigation } from '../utils/navigationGuard';
 import styles from './ScreenHeroesPage.module.css';
 
 const parseDistrictId = (value: string | null): number | null => {
@@ -68,7 +69,7 @@ export function ScreenHeroesPage() {
   return (
     <main className={styles.page} data-keyboard-open={isKeyboardOpen || undefined}>
       <header className={styles.header}>
-        <Link className={styles.backLink} to={ROUTES.screenDistricts} aria-label="Вернуться к выбору района">
+        <Link className={styles.backLink} to={ROUTES.screenDistricts} onClick={guardScreenLinkNavigation} aria-label="Вернуться к выбору района">
           <span className={styles.backIcon}><ArrowLeft aria-hidden="true" strokeWidth={1.35} /></span>
           <span>Назад</span>
         </Link>

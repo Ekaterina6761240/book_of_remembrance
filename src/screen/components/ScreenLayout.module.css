@@ -11,4 +11,16 @@
   background: #1f242a;
   color: #e9e9e6;
   isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.layout :where(input, textarea) {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.layout img {
+  -webkit-user-drag: none;
 }
