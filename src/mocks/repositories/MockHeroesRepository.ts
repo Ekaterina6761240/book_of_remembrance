@@ -12,7 +12,9 @@ export class MockHeroesRepository implements HeroesRepository {
   }
 
   async getById(id: number): Promise<Hero> {
-    return clone(this.heroes[findEntityIndex(this.heroes, id)]!);
+    const hero = this.heroes.find((item) => item.id === id);
+    if (!hero) throw new ApiError(404, 'Герой не найден');
+    return clone(hero);
   }
 
   async create(data: HeroFormData): Promise<Hero> {

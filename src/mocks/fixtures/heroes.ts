@@ -220,7 +220,16 @@ export const heroFixtures: Hero[] = heroSeeds.map((seed, index) => {
 		`Портрет: ${seed.lastName} ${seed.firstName}`,
 	)
 	const gallery =
-		id % 4 === 0
+		id === 5
+			? [
+					image(300 + id * 4, 'Фотография из семейного архива'),
+					image(301 + id * 4, 'Фронтовые товарищи'),
+					image(302 + id * 4, 'Наградной лист'),
+					image(303 + id * 4, 'Послевоенная фотография'),
+				]
+			: id === 12
+				? []
+				: id % 4 === 0
 			? [
 					image(200 + id * 2, 'Фотография из семейного архива'),
 					image(201 + id * 2, 'Наградной лист'),
