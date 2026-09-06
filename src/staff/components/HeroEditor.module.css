@@ -1,0 +1,74 @@
+.page { display: flex; min-height: calc(100vh - 39px); flex-direction: column; gap: 32px; padding: 20px 20px 80px; color: #252525; }
+.pageHeader { display: flex; width: 100%; flex-direction: column; gap: 16px; }
+.breadcrumbs { display: flex; min-height: 13px; flex-wrap: wrap; align-items: center; gap: 4px; color: #949494; font-size: 12px; font-weight: 500; line-height: 1.1; }
+.breadcrumbs a { text-decoration: none; }
+.titleRow { display: flex; min-height: 28px; align-items: center; gap: 16px; }
+.titleRow h1 { margin: 0; font-size: 25px; font-weight: 500; line-height: 1.1; }
+.dirtyState { color: #e55733; font-size: 12px; font-weight: 500; }
+.editorGrid { display: grid; width: 100%; grid-template-columns: minmax(0, 654px) minmax(300px, 350px); align-items: start; gap: 16px; }
+.mainColumn, .sideColumn { display: flex; min-width: 0; flex-direction: column; gap: 16px; }
+.nameCard, .sectionCard, .publishCard { width: 100%; overflow: hidden; border-radius: 16px; background: #fff; }
+.nameCard { display: flex; flex-direction: column; gap: 24px; padding: 24px; }
+.nameCard h2 { margin: 0; overflow-wrap: anywhere; font-size: 25px; font-weight: 500; line-height: 1.1; }
+.nameFields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.sectionCard { display: flex; flex-direction: column; padding: 24px; }
+.sectionHeader { display: flex; width: 100%; min-height: 15px; align-items: center; justify-content: space-between; gap: 16px; padding: 0; border: 0; background: transparent; color: #252525; cursor: pointer; font-size: 14px; font-weight: 500; line-height: 1.1; text-align: left; }
+.sectionHeader svg { flex: 0 0 12px; }
+.sectionContent { display: flex; width: 100%; flex-direction: column; align-items: flex-start; gap: 24px; padding-top: 24px; }
+.dateFields, .scheduleFields > div { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { display: flex; min-width: 0; flex-direction: column; gap: 4px; color: #949494; font-size: 14px; font-weight: 400; line-height: 1.2; }
+.field b { color: #e55733; font-weight: 400; }
+.field input, .field select, .sectionContent textarea { width: 100%; border: 0; border-radius: 4px; outline: 0; background: #f3f4f4; color: #252525; font-size: 14px; font-weight: 400; line-height: 1.2; }
+.field input, .field select { height: 40px; padding: 12px; }
+.field select { padding-right: 32px; cursor: pointer; }
+.field input:focus, .field select:focus, .sectionContent textarea:focus { box-shadow: inset 0 0 0 1px #949494; }
+.field input[aria-invalid='true'], .field select[aria-invalid='true'] { box-shadow: inset 0 0 0 1px #f40a13; }
+.field small, .standaloneError { color: #f40a13; font-size: 12px; line-height: 1.2; }
+.sectionContent textarea { min-height: 213px; padding: 12px; resize: vertical; }
+.publishCard { display: flex; flex-direction: column; gap: 24px; padding: 24px; }
+.publishCard h2 { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.1; }
+.scheduleFields { display: flex; flex-direction: column; gap: 4px; color: #949494; font-size: 14px; line-height: 1.2; }
+.saveButton, .darkButton, .confirmButton, .uploadButton { display: flex; min-height: 40px; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; border: 0; border-radius: 80px; cursor: pointer; font-size: 14px; font-weight: 500; line-height: 1.1; }
+.saveButton { width: 100%; background: #e55733; color: #fff; }
+.saveButton:disabled { cursor: wait; opacity: .65; }
+.darkButton, .confirmButton, .uploadButton { background: #252525; color: #fff; }
+.fullButton { width: 100%; }
+.cancelButton { display: flex; align-items: center; align-self: center; gap: 4px; padding: 0; border: 0; background: transparent; color: #949494; cursor: pointer; font-size: 14px; font-weight: 500; line-height: 1.1; }
+.districtList { display: flex; width: 100%; max-height: 248px; flex-direction: column; gap: 16px; overflow-y: auto; }
+.districtList label { display: flex; min-height: 17px; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; line-height: 1.2; }
+.districtList input { width: 16px; height: 16px; margin: 0; accent-color: #e55733; }
+.addDistrictLink { color: #949494; font-size: 14px; font-weight: 500; line-height: 1.1; text-decoration: none; }
+.mainImage { position: relative; width: 100%; }
+.imageSelect { display: block; width: 100%; height: 322px; padding: 0; overflow: hidden; border: 0; border-radius: 16px; background: #cfcfcf; cursor: pointer; }
+.mainImagePreview { width: 100%; height: 100%; border-radius: 16px; }
+.removeMainImage { position: absolute; top: 10px; right: 10px; display: grid; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; place-items: center; background: #252525; color: #fff; cursor: pointer; }
+.mainImage p { margin: 8px 0 0; color: #949494; font-size: 12px; line-height: 1.2; }
+.galleryItem .galleryPreview { width: 80px; height: 80px; border-radius: 4px; }
+.gallery { display: grid; width: 100%; grid-template-columns: repeat(auto-fill, 80px); gap: 16px 8px; }
+.galleryItem { position: relative; display: flex; width: 80px; min-width: 0; flex-direction: column; gap: 4px; }
+.galleryItem > button { position: absolute; top: 4px; right: 4px; display: grid; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; place-items: center; background: #252525; color: #fff; cursor: pointer; }
+.galleryItem > span { overflow: hidden; color: #949494; font-size: 12px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.feedback { display: flex; width: 100%; min-height: 40px; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 24px; border-radius: 16px; background: #434343; color: #fff; font-size: 12px; font-weight: 500; }
+.feedbackError { background: #f40a13; }
+.feedback button { display: grid; width: 18px; height: 18px; padding: 0; border: 0; place-items: center; background: transparent; color: #fff; cursor: pointer; }
+.stateMessage { display: flex; min-height: 500px; width: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #949494; font-size: 14px; }
+.stateMessage p { margin: 0; }
+.stateMessage button, .stateMessage a { padding: 0; border: 0; background: transparent; color: #e55733; cursor: pointer; font-weight: 500; }
+.spinner { width: 20px; height: 20px; border: 2px solid #e4eaee; border-top-color: #e55733; border-radius: 50%; animation: spin .8s linear infinite; }
+.modalOverlay { position: fixed; z-index: 1000; inset: 0; display: grid; padding: 24px; place-items: center; background: rgb(0 0 0 / 84%); }
+.mediaModal { display: flex; width: min(760px, 100%); max-height: min(720px, calc(100vh - 48px)); flex-direction: column; gap: 24px; padding: 24px; overflow: hidden; border-radius: 16px; background: #fff; }
+.mediaModal > :nth-child(2) { min-height: 0; overflow-y: auto; }
+.modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.modalHeader h2 { margin: 0; font-size: 25px; font-weight: 500; line-height: 1.1; }
+.modalHeader button { display: grid; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; place-items: center; background: #252525; color: #fff; cursor: pointer; }
+.pickerActions { display: flex; align-items: center; gap: 16px; }
+.pickerActions .saveButton { width: auto; min-width: 190px; }
+.confirmModal { position: relative; display: flex; width: 380px; max-width: 100%; min-height: 260px; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 40px; border-radius: 16px; background: #fff; color: #252525; text-align: center; }
+.confirmModal h2 { margin: 0; font-size: 25px; font-weight: 500; line-height: 1.1; }
+.confirmModal p { margin: 0; font-size: 14px; line-height: 1.2; }
+.modalClose { position: absolute; top: 11px; right: 11px; display: grid; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; place-items: center; background: #252525; color: #fff; cursor: pointer; }
+.confirmButton { width: 100%; }
+.modalCancel { padding: 0; border: 0; background: transparent; color: #949494; cursor: pointer; font-size: 14px; font-weight: 500; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 1120px) { .editorGrid { grid-template-columns: minmax(0, 1fr) 320px; } .nameFields { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .editorGrid { grid-template-columns: 1fr; } .sideColumn { grid-row: 1; } .dateFields { grid-template-columns: 1fr; } }

@@ -1,0 +1,193 @@
+.keyboard {
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: 42px;
+  left: 0;
+  display: flex;
+  width: min(1000px, calc(100% - 160px));
+  margin-inline: auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.key,
+.space,
+.closeButton {
+  border: 0;
+  color: var(--screen-dark);
+  background: var(--screen-beige);
+  font-family: "Martian Mono", monospace;
+  font-weight: 600;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 24px;
+  place-items: center;
+}
+
+.backspace {
+  width: 108px;
+  border-radius: 30px;
+}
+
+.backspace svg {
+  width: 34px;
+  height: 34px;
+}
+
+.space {
+  width: 100%;
+  height: 54px;
+  padding: 0;
+  border-radius: 30px;
+}
+
+.space span {
+  display: block;
+  width: 44px;
+  height: 2px;
+  margin: auto;
+  background: var(--screen-dark);
+}
+
+.closeButton {
+  position: absolute;
+  right: -72px;
+  bottom: 112px;
+  display: grid;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.closeButton svg {
+  width: 30px;
+  height: 30px;
+}
+
+.key:active,
+.space:active,
+.closeButton:active {
+  color: var(--screen-beige);
+  background: var(--screen-red);
+}
+
+.key:focus-visible,
+.space:focus-visible,
+.closeButton:focus-visible {
+  outline: 5px solid var(--screen-red);
+  outline-offset: 3px;
+}
+
+@media (min-width: 2560px) {
+  .keyboard {
+    bottom: 84px;
+    width: min(2000px, calc(100% - 320px));
+    gap: 16px;
+  }
+
+  .row {
+    gap: 16px;
+  }
+
+  .key {
+    width: 108px;
+    height: 108px;
+    font-size: 48px;
+  }
+
+  .backspace {
+    width: 216px;
+    border-radius: 60px;
+  }
+
+  .backspace svg {
+    width: 68px;
+    height: 68px;
+  }
+
+  .space {
+    height: 108px;
+    border-radius: 60px;
+  }
+
+  .space span {
+    width: 88px;
+    height: 4px;
+  }
+
+  .closeButton {
+    right: -144px;
+    bottom: 224px;
+    width: 108px;
+    height: 108px;
+  }
+
+  .closeButton svg {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 700px) {
+  .keyboard {
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: calc(100% - 20px);
+    gap: 5px;
+  }
+
+  .row {
+    gap: 4px;
+  }
+
+  .key {
+    width: calc((100vw - 66px) / 12);
+    height: calc((100vw - 66px) / 12);
+    min-width: 25px;
+    min-height: 25px;
+    font-size: clamp(12px, 3.5vw, 17px);
+  }
+
+  .backspace {
+    width: calc((100vw - 66px) / 6);
+    border-radius: 24px;
+  }
+
+  .backspace svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .space {
+    height: 34px;
+  }
+
+  .closeButton {
+    right: 0;
+    bottom: 78px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .closeButton svg {
+    width: 20px;
+    height: 20px;
+  }
+}

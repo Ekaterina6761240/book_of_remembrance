@@ -1,7 +1,11 @@
-import type { MediaRepository } from '../../repositories';
+import type { MediaRepository, MediaUploadProgressHandler } from '../../repositories';
 import type { MediaFile, MediaFormData } from '../../shared/types';
 import { clone, findEntityIndex, nextEntityId } from '../../shared/utils';
+import { ApiError } from '../../api/ApiError';
 import { heroFixtures } from '../fixtures/heroes';
+
+const wait = (milliseconds: number): Promise<void> =>
+  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
 export class MockMediaRepository implements MediaRepository {
   private media: MediaFile[] = clone(
@@ -12,13 +16,23 @@ export class MockMediaRepository implements MediaRepository {
     return clone(this.media);
   }
 
-  async upload(data: MediaFormData): Promise<MediaFile> {
+  async upload(data: MediaFormData, onProgress?: MediaUploadProgressHandler): Promise<MediaFile> {
+    onProgress?.(8);
+    await wait(120);
+    onProgress?.(34);
+    await wait(120);
+    if (data.file.name.toLowerCase().includes('api-error')) {
+      throw new ApiError(500, 'Не удалось загрузить файл. Попробуйте ещё раз.');
+    }
+    onProgress?.(72);
+    await wait(120);
     const mediaFile: MediaFile = {
       id: nextEntityId(this.media),
       url: URL.createObjectURL(data.file),
       name: data.name ?? data.file.name,
     };
     this.media.push(mediaFile);
+    onProgress?.(100);
     return clone(mediaFile);
   }
 

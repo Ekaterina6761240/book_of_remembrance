@@ -14,6 +14,8 @@ export type Hero = {
   biography?: string;
   feat?: string;
   history?: string;
+  awards?: string;
   gallery: MediaFile[];
   status?: HeroStatus;
+  publishedAt?: string;
 };
