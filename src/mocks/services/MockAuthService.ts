@@ -6,6 +6,7 @@ import { mockStaffUser } from '../fixtures/user';
 const SESSION_COOKIE = 'museum_mock_session';
 const SESSION_MARKER = 'staff-session-v1';
 const MOCK_PASSWORD = 'admin';
+const PERSISTENT_SESSION_SECONDS = 60 * 60 * 24 * 30;
 
 const delay = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => window.setTimeout(resolve, milliseconds));
@@ -18,7 +19,7 @@ const readCookie = (name: string): string | null => {
 };
 
 export class MockAuthService implements AuthService {
-  async login(login: string, password: string): Promise<User> {
+  async login(login: string, password: string, remember: boolean): Promise<User> {
     await delay(450);
 
     if (login.trim().toLowerCase() === 'api-error') {
@@ -29,7 +30,8 @@ export class MockAuthService implements AuthService {
       throw new AuthError('invalid_credentials', 'Неверный логин или пароль');
     }
 
-    document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(SESSION_MARKER)}; Path=/; SameSite=Lax`;
+    const lifetime = remember ? `; Max-Age=${PERSISTENT_SESSION_SECONDS}` : '';
+    document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(SESSION_MARKER)}; Path=/; SameSite=Lax${lifetime}`;
     return clone(mockStaffUser);
   }
 

@@ -29,7 +29,14 @@ export function StaffHeader() {
         </Link>
         <nav className={styles.actions} aria-label="Быстрые действия">
           <Link className={styles.action} to={ROUTES.staffHeroNew}><CirclePlus size={12} />Добавить</Link>
-          <button className={styles.action} type="button"><Trash2 size={12} />Очистить кэш</button>
+          <button
+            className={`${styles.action} ${styles.cacheAction}`}
+            type="button"
+            disabled
+            title="Будет доступно после подключения offline-кеша"
+          >
+            <Trash2 size={12} />Очистить кэш
+          </button>
         </nav>
       </div>
       <button className={styles.action} type="button" onClick={handleLogout} disabled={isLoggingOut}>

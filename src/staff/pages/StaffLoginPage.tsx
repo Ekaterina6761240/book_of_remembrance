@@ -36,7 +36,7 @@ export function StaffLoginPage() {
     setError(null);
     setIsLoading(true);
     try {
-      await authenticate(login, password);
+      await authenticate(login, password, rememberMe);
       navigate(redirectTo, { replace: true });
     } catch (caughtError) {
       setError(caughtError instanceof AuthError

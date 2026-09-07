@@ -18,9 +18,6 @@ export const formatHeroLifeDates = (hero: Hero): string => {
   return dates.length ? dates.join(' — ') : 'Даты жизни не указаны';
 };
 
-export const getHeroFullName = (hero: Hero): string =>
-  [hero.lastName, hero.firstName, hero.middleName].filter(Boolean).join(' ');
-
 export const getHeroMedia = (hero: Hero): MediaFile[] => {
   const result: MediaFile[] = [];
   const ids = new Set<number>();

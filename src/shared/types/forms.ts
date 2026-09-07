@@ -13,8 +13,3 @@ export type MediaFormData = {
   file: File;
   name?: string;
 };
-
-export type LoginFormData = {
-  username: string;
-  password: string;
-};

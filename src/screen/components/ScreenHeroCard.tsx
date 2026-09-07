@@ -3,7 +3,7 @@ import { UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../shared/constants/routes';
 import type { Hero } from '../../shared/types';
-import { getHeroFullName } from '../utils/heroes';
+import { getHeroFullName } from '../../shared/utils';
 import { guardScreenLinkNavigation } from '../utils/navigationGuard';
 import styles from './ScreenHeroCard.module.css';
 

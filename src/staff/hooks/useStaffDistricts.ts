@@ -122,6 +122,14 @@ export const useStaffDistricts = () => {
     if (deleteCandidates.length === 0) return;
     setIsSaving(true);
     setFeedback(null);
+
+    if (deleteCandidates.some((district) => (heroCounts[district.id] ?? 0) > 0)) {
+      setFeedback({ type: 'error', message: DELETE_CONFLICT_MESSAGE });
+      setDeleteCandidates([]);
+      setIsSaving(false);
+      return;
+    }
+
     try {
       for (const district of deleteCandidates) {
         await districtsService.delete(district.id);
@@ -144,7 +152,9 @@ export const useStaffDistricts = () => {
           ? DELETE_CONFLICT_MESSAGE
           : getErrorMessage(error, 'Не удалось удалить район.'),
       });
+      setSelectedIds(new Set());
       setDeleteCandidates([]);
+      await load();
     } finally {
       setIsSaving(false);
     }

@@ -1,7 +1,7 @@
 import type { User } from '../shared/types';
 
 export interface AuthService {
-  login(login: string, password: string): Promise<User>;
+  login(login: string, password: string, remember: boolean): Promise<User>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
 }

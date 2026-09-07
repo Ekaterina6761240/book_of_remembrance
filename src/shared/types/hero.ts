@@ -13,7 +13,6 @@ export type Hero = {
   mainImage?: MediaFile;
   biography?: string;
   feat?: string;
-  history?: string;
   awards?: string;
   gallery: MediaFile[];
   status?: HeroStatus;

@@ -6,7 +6,7 @@ import { createAuthService } from './auth';
 type AuthContextValue = {
   user: User | null;
   isInitializing: boolean;
-  login(login: string, password: string): Promise<User>;
+  login(login: string, password: string, remember: boolean): Promise<User>;
   logout(): Promise<void>;
 };
 
@@ -26,8 +26,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => { isActive = false; };
   }, [authService]);
 
-  const login = async (loginValue: string, password: string): Promise<User> => {
-    const authenticatedUser = await authService.login(loginValue, password);
+  const login = async (loginValue: string, password: string, remember: boolean): Promise<User> => {
+    const authenticatedUser = await authService.login(loginValue, password, remember);
     setUser(authenticatedUser);
     return authenticatedUser;
   };

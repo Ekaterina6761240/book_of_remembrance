@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '../../shared/constants/routes';
+import { getHeroFullName } from '../../shared/utils';
 import { HeroGallery } from '../components/HeroGallery';
 import { HeroMedia } from '../components/HeroMedia';
 import { HeroTabs, type HeroTab } from '../components/HeroTabs';
 import { ScreenBackButton } from '../components/ScreenBackButton';
 import { useScreenHero } from '../hooks/useScreenHero';
-import { formatHeroLifeDates, getHeroFullName, getHeroMedia } from '../utils/hero';
+import { formatHeroLifeDates, getHeroMedia } from '../utils/hero';
 import styles from './ScreenHeroPage.module.css';
 
 const parseHeroId = (value?: string): number | null => {

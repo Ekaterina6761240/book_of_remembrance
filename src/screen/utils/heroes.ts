@@ -1,4 +1,5 @@
 import type { Hero } from '../../shared/types';
+import { getHeroFullName } from '../../shared/utils';
 
 export const RUSSIAN_ALPHABET = [
   'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П',
@@ -10,9 +11,6 @@ const russianCollator = new Intl.Collator('ru-RU', {
   sensitivity: 'variant',
   usage: 'sort',
 });
-
-export const getHeroFullName = (hero: Hero): string =>
-  [hero.lastName, hero.firstName, hero.middleName].filter(Boolean).join(' ');
 
 const getHeroSearchText = (hero: Hero): string => [
   getHeroFullName(hero),
