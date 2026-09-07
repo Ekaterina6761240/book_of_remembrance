@@ -52,8 +52,10 @@ export const useStaffMedia = () => {
     const uploaded: MediaFile[] = [];
     try {
       for (let index = 0; index < images.length; index += 1) {
+        const file = images[index];
+        if (!file) continue;
         const item = await mediaService.upload(
-          { file: images[index]!, name: images[index]!.name },
+          { file, name: file.name },
           (fileProgress) => setUploadProgress(Math.round(((index + fileProgress / 100) / images.length) * 100)),
         );
         uploaded.push(item);

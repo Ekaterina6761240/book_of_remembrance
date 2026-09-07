@@ -70,25 +70,29 @@ const toEditorValues = (hero: Hero): HeroEditorValues => ({
   publishTime: hero.publishedAt?.slice(11, 16) ?? '',
 });
 
-const toFormData = (values: HeroEditorValues): HeroFormData => ({
-  firstName: values.firstName.trim(),
-  lastName: values.lastName.trim(),
-  middleName: values.middleName.trim() || undefined,
-  districtId: values.districtId!,
-  birthDate: values.birthDate || undefined,
-  deathDate: values.deathDate || undefined,
-  mainImage: values.mainImage ?? undefined,
-  biography: values.biography.trim() || undefined,
-  feat: values.feat.trim() || undefined,
-  awards: values.awards.trim() || undefined,
-  gallery: values.gallery,
-  status: values.status === 'published' && values.publishMode === 'scheduled'
-    ? 'scheduled'
-    : values.status,
-  publishedAt: values.status === 'published' && values.publishMode === 'scheduled'
-    ? `${values.publishDate}T${values.publishTime}:00`
-    : undefined,
-});
+const toFormData = (values: HeroEditorValues): HeroFormData => {
+  if (values.districtId === null) throw new Error('Выберите район.');
+
+  return {
+    firstName: values.firstName.trim(),
+    lastName: values.lastName.trim(),
+    middleName: values.middleName.trim() || undefined,
+    districtId: values.districtId,
+    birthDate: values.birthDate || undefined,
+    deathDate: values.deathDate || undefined,
+    mainImage: values.mainImage ?? undefined,
+    biography: values.biography.trim() || undefined,
+    feat: values.feat.trim() || undefined,
+    awards: values.awards.trim() || undefined,
+    gallery: values.gallery,
+    status: values.status === 'published' && values.publishMode === 'scheduled'
+      ? 'scheduled'
+      : values.status,
+    publishedAt: values.status === 'published' && values.publishMode === 'scheduled'
+      ? `${values.publishDate}T${values.publishTime}:00`
+      : undefined,
+  };
+};
 
 const validate = (values: HeroEditorValues): HeroEditorErrors => {
   const errors: HeroEditorErrors = {};
@@ -139,13 +143,13 @@ export const useHeroEditor = (idParam: string | undefined) => {
     setLoadError(null);
     allowNavigationRef.current = false;
     try {
-      if (isEdit && (!Number.isInteger(heroId) || heroId! <= 0)) {
+      if (heroId !== null && (!Number.isInteger(heroId) || heroId <= 0)) {
         throw new Error('Некорректный идентификатор героя.');
       }
       const [nextDistricts, nextMedia, hero] = await Promise.all([
         districtsService.getAll(),
         mediaService.getAll(),
-        isEdit ? heroesService.getById(heroId!) : Promise.resolve(null),
+        heroId === null ? Promise.resolve(null) : heroesService.getById(heroId),
       ]);
       const nextValues = hero ? toEditorValues(hero) : EMPTY_VALUES;
       setDistricts(nextDistricts.sort((left, right) => left.name.localeCompare(right.name, 'ru')));
@@ -158,7 +162,7 @@ export const useHeroEditor = (idParam: string | undefined) => {
     } finally {
       setIsLoading(false);
     }
-  }, [districtsService, heroId, heroesService, isEdit, mediaService]);
+  }, [districtsService, heroId, heroesService, mediaService]);
 
   useEffect(() => {
     void load();
@@ -197,9 +201,10 @@ export const useHeroEditor = (idParam: string | undefined) => {
     setIsSaving(true);
     setFeedback(null);
     try {
-      const savedHero = isEdit
-        ? await heroesService.update(heroId!, toFormData(values))
-        : await heroesService.create(toFormData(values));
+      const formData = toFormData(values);
+      const savedHero = heroId === null
+        ? await heroesService.create(formData)
+        : await heroesService.update(heroId, formData);
       const savedValues = toEditorValues(savedHero);
       setValues(savedValues);
       setBaseline(serializeValues(savedValues));

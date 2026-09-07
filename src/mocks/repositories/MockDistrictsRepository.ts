@@ -14,7 +14,9 @@ export class MockDistrictsRepository implements DistrictsRepository {
   }
 
   async getById(id: number): Promise<District> {
-    return clone(this.store.districts[findEntityIndex(this.store.districts, id)]!);
+    const district = this.store.districts[findEntityIndex(this.store.districts, id)];
+    if (!district) throw new Error(`District with id ${id} was not found`);
+    return clone(district);
   }
 
   async create(data: DistrictFormData): Promise<District> {

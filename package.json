@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview"
@@ -20,8 +22,14 @@
   "devDependencies": {
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
     "@vitejs/plugin-react": "4.3.4",
+    "eslint": "8.57.1",
+    "eslint-plugin-react": "7.37.3",
+    "eslint-plugin-react-hooks": "4.6.0",
     "typescript": "5.4.5",
-    "vite": "4.5.14"
+    "vite": "4.5.14",
+    "vitest": "0.34.6"
   }
 }
