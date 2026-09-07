@@ -1,6 +1,6 @@
 import type { MediaFile } from './media';
 
-export type HeroStatus = 'draft' | 'published';
+export type HeroStatus = 'draft' | 'scheduled' | 'published';
 
 export type Hero = {
   id: number;

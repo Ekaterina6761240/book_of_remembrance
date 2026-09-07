@@ -1,5 +1,11 @@
 import { createContext, type PropsWithChildren, useContext, useState } from 'react';
-import { DistrictsService, HeroesService, MediaService, type Services } from '../../services';
+import {
+  DistrictsService,
+  HeroesService,
+  MediaService,
+  ScreenContentService,
+  type Services,
+} from '../../services';
 import { createRepositories } from './repositories';
 
 const ServicesContext = createContext<Services | null>(null);
@@ -10,6 +16,7 @@ const createServices = (): Services => {
     districts: new DistrictsService(repositories.districts),
     heroes: new HeroesService(repositories.heroes),
     media: new MediaService(repositories.media),
+    screenContent: new ScreenContentService(repositories.screenContent),
   };
 };
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useServices } from '../../app/providers/ServicesProvider';
 import type { District, Hero } from '../../shared/types';
 
@@ -11,70 +11,83 @@ export const useStaffHeroes = () => {
   const { districts: districtsService, heroes: heroesService } = useServices();
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [heroesError, setHeroesError] = useState<string | null>(null);
+  const [districtsError, setDistrictsError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [query, setQueryState] = useState('');
   const [districtId, setDistrictIdState] = useState<number | null>(null);
-  const [page, setPage] = useState(1);
+  const [page, setPageState] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(() => new Set());
   const [deleteCandidates, setDeleteCandidates] = useState<Hero[]>([]);
+  const requestIdRef = useRef(0);
 
-  const reload = useCallback(async () => {
-    setIsLoading(true);
-    setLoadError(null);
+  const loadDistricts = useCallback(async () => {
+    setDistrictsError(null);
     try {
-      const [nextHeroes, nextDistricts] = await Promise.all([
-        heroesService.getAll(),
-        districtsService.getAll(),
-      ]);
-      setHeroes(nextHeroes);
+      const nextDistricts = await districtsService.getAll();
       setDistricts(nextDistricts.sort((left, right) => left.name.localeCompare(right.name, 'ru')));
     } catch (error: unknown) {
-      setLoadError(getErrorMessage(error, 'Не удалось загрузить список героев.'));
-    } finally {
-      setIsLoading(false);
+      setDistrictsError(getErrorMessage(error, 'Не удалось загрузить районы.'));
     }
-  }, [districtsService, heroesService]);
+  }, [districtsService]);
 
-  useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  const filteredHeroes = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase('ru');
-    return heroes
-      .filter((hero) => {
-        const fullName = [hero.lastName, hero.firstName, hero.middleName].filter(Boolean).join(' ').toLocaleLowerCase('ru');
-        return (!normalizedQuery || fullName.includes(normalizedQuery))
-          && (districtId === null || hero.districtId === districtId);
-      })
-      .sort((left, right) => {
-        const byLastName = left.lastName.localeCompare(right.lastName, 'ru');
-        return byLastName || left.firstName.localeCompare(right.firstName, 'ru');
+  const loadHeroes = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
+    setIsLoading(true);
+    setHeroesError(null);
+    try {
+      const result = await heroesService.getList({
+        page,
+        perPage: PAGE_SIZE,
+        search: query.trim() || undefined,
+        districtId: districtId ?? undefined,
+        sortOrder: 'asc',
       });
-  }, [districtId, heroes, query]);
+      if (requestId !== requestIdRef.current) return;
 
-  const totalPages = Math.max(1, Math.ceil(filteredHeroes.length / PAGE_SIZE));
-  const visibleHeroes = useMemo(
-    () => filteredHeroes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [filteredHeroes, page],
-  );
+      setHeroes(result.items);
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
+      if (result.page !== page) setPageState(result.page);
+    } catch (error: unknown) {
+      if (requestId === requestIdRef.current) {
+        setHeroesError(getErrorMessage(error, 'Не удалось загрузить список героев.'));
+      }
+    } finally {
+      if (requestId === requestIdRef.current) setIsLoading(false);
+    }
+  }, [districtId, heroesService, page, query]);
 
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
+    void loadDistricts();
+  }, [loadDistricts]);
+
+  useEffect(() => {
+    void loadHeroes();
+  }, [loadHeroes]);
+
+  const reload = useCallback(async () => {
+    await Promise.all([loadDistricts(), loadHeroes()]);
+  }, [loadDistricts, loadHeroes]);
 
   const setQuery = (value: string) => {
     setQueryState(value);
-    setPage(1);
+    setPageState(1);
     setSelectedIds(new Set());
   };
 
   const setDistrictId = (value: number | null) => {
     setDistrictIdState(value);
-    setPage(1);
+    setPageState(1);
+    setSelectedIds(new Set());
+  };
+
+  const setPage = (value: number) => {
+    setPageState(value);
     setSelectedIds(new Set());
   };
 
@@ -90,8 +103,8 @@ export const useStaffHeroes = () => {
   const toggleAllVisible = () => {
     setSelectedIds((current) => {
       const next = new Set(current);
-      const allVisibleSelected = visibleHeroes.length > 0 && visibleHeroes.every((hero) => next.has(hero.id));
-      visibleHeroes.forEach((hero) => allVisibleSelected ? next.delete(hero.id) : next.add(hero.id));
+      const allVisibleSelected = heroes.length > 0 && heroes.every((hero) => next.has(hero.id));
+      heroes.forEach((hero) => allVisibleSelected ? next.delete(hero.id) : next.add(hero.id));
       return next;
     });
   };
@@ -110,13 +123,13 @@ export const useStaffHeroes = () => {
     try {
       await Promise.all(deleteCandidates.map((hero) => heroesService.delete(hero.id)));
       const deletedIds = new Set(deleteCandidates.map((hero) => hero.id));
-      setHeroes((current) => current.filter((hero) => !deletedIds.has(hero.id)));
       setSelectedIds((current) => new Set([...current].filter((id) => !deletedIds.has(id))));
       setDeleteCandidates([]);
+      await loadHeroes();
     } catch (error: unknown) {
       setActionError(getErrorMessage(error, 'Не удалось удалить выбранные записи.'));
       setDeleteCandidates([]);
-      await reload();
+      await loadHeroes();
     } finally {
       setIsDeleting(false);
     }
@@ -130,11 +143,11 @@ export const useStaffHeroes = () => {
   return {
     heroes,
     districts,
-    visibleHeroes,
-    filteredCount: filteredHeroes.length,
+    visibleHeroes: heroes,
+    filteredCount: total,
     page,
     pageSize: PAGE_SIZE,
-    totalPages,
+    totalPages: Math.max(totalPages, 1),
     query,
     districtId,
     selectedIds,
@@ -142,7 +155,7 @@ export const useStaffHeroes = () => {
     deleteCandidates,
     isLoading,
     isDeleting,
-    loadError,
+    loadError: heroesError ?? districtsError,
     actionError,
     setQuery,
     setDistrictId,

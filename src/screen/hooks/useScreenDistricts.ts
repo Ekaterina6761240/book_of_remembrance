@@ -9,7 +9,7 @@ type ScreenDistrictsState = {
 };
 
 export const useScreenDistricts = (): ScreenDistrictsState => {
-  const { districts: districtsService } = useServices();
+  const { screenContent } = useServices();
   const [state, setState] = useState<ScreenDistrictsState>({
     districts: [],
     isLoading: true,
@@ -19,10 +19,10 @@ export const useScreenDistricts = (): ScreenDistrictsState => {
   useEffect(() => {
     let isActive = true;
 
-    districtsService.getAll()
-      .then((districts) => {
+    screenContent.getSnapshot()
+      .then((snapshot) => {
         if (isActive) {
-          setState({ districts, isLoading: false, error: null });
+          setState({ districts: snapshot.districts, isLoading: false, error: null });
         }
       })
       .catch((error: unknown) => {
@@ -38,7 +38,7 @@ export const useScreenDistricts = (): ScreenDistrictsState => {
     return () => {
       isActive = false;
     };
-  }, [districtsService]);
+  }, [screenContent]);
 
   return state;
 };

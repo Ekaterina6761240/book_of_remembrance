@@ -9,20 +9,20 @@ type ScreenHeroesState = {
 };
 
 export const useScreenHeroes = (): ScreenHeroesState => {
-  const { heroes: heroesService } = useServices();
+  const { screenContent } = useServices();
   const [state, setState] = useState<ScreenHeroesState>({ heroes: [], isLoading: true, error: null });
 
   useEffect(() => {
     let isActive = true;
-    heroesService.getPublished()
-      .then((heroes) => isActive && setState({ heroes, isLoading: false, error: null }))
+    screenContent.getSnapshot()
+      .then((snapshot) => isActive && setState({ heroes: snapshot.heroes, isLoading: false, error: null }))
       .catch((error: unknown) => isActive && setState({
         heroes: [],
         isLoading: false,
         error: error instanceof Error ? error.message : 'Не удалось загрузить героев',
       }));
     return () => { isActive = false; };
-  }, [heroesService]);
+  }, [screenContent]);
 
   return state;
 };

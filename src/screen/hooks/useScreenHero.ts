@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ApiError } from '../../api/ApiError';
 import { useServices } from '../../app/providers/ServicesProvider';
 import type { Hero } from '../../shared/types';
 
 export type ScreenHeroStatus = 'loading' | 'success' | 'not-found' | 'error';
 
 export const useScreenHero = (id: number | null) => {
-  const { heroes: heroesService } = useServices();
+  const { screenContent } = useServices();
   const [hero, setHero] = useState<Hero | null>(null);
   const [isLoading, setIsLoading] = useState(id !== null);
   const [error, setError] = useState<string | null>(null);
@@ -24,23 +23,24 @@ export const useScreenHero = (id: number | null) => {
     }
     setIsLoading(true);
     setStatus('loading');
-    heroesService.getById(id)
-      .then((hero) => {
+    screenContent.getSnapshot()
+      .then((snapshot) => {
         if (isActive) {
-          setHero(hero);
+          const publicHero = snapshot.heroes.find((hero) => hero.id === id) ?? null;
+          setHero(publicHero);
           setIsLoading(false);
-          setStatus('success');
+          setStatus(publicHero ? 'success' : 'not-found');
         }
       })
       .catch((error: unknown) => {
         if (isActive) {
           setError(error instanceof Error ? error.message : 'Не удалось загрузить героя');
           setIsLoading(false);
-          setStatus(error instanceof ApiError && error.status === 404 ? 'not-found' : 'error');
+          setStatus('error');
         }
       });
     return () => { isActive = false; };
-  }, [heroesService, id]);
+  }, [id, screenContent]);
 
   return { hero, isLoading, error, status };
 };

@@ -6,7 +6,7 @@ export type DistrictFormData = Omit<District, 'id'>;
 
 export type HeroFormData = Omit<Hero, 'id' | 'gallery' | 'status'> & {
   gallery: MediaFile[];
-  status?: HeroStatus;
+  status: HeroStatus;
 };
 
 export type MediaFormData = {

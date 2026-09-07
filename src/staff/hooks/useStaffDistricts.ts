@@ -44,14 +44,12 @@ export const useStaffDistricts = () => {
     setIsLoading(true);
     setLoadError(null);
     try {
-      const [loadedDistricts, heroes] = await Promise.all([
-        districtsService.getAll(),
-        heroesService.getAll(),
-      ]);
-      const counts = heroes.reduce<Record<number, number>>((result, hero) => {
-        result[hero.districtId] = (result[hero.districtId] ?? 0) + 1;
-        return result;
-      }, {});
+      const loadedDistricts = await districtsService.getAll();
+      const totals = await Promise.all(loadedDistricts.map((district) =>
+        heroesService.getList({ page: 1, perPage: 1, districtId: district.id })
+          .then((result) => [district.id, result.total] as const),
+      ));
+      const counts = Object.fromEntries(totals);
       setDistricts(loadedDistricts);
       setHeroCounts(counts);
     } catch (error) {

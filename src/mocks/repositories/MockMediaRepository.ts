@@ -2,15 +2,19 @@ import type { MediaRepository, MediaUploadProgressHandler } from '../../reposito
 import type { MediaFile, MediaFormData } from '../../shared/types';
 import { clone, findEntityIndex, nextEntityId } from '../../shared/utils';
 import { ApiError } from '../../api/ApiError';
-import { heroFixtures } from '../fixtures/heroes';
+import { MockDataStore } from './MockDataStore';
 
 const wait = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
 export class MockMediaRepository implements MediaRepository {
-  private media: MediaFile[] = clone(
-    heroFixtures.flatMap((hero) => [hero.mainImage, ...hero.gallery]).filter((item): item is MediaFile => item !== undefined),
-  );
+  private media: MediaFile[];
+
+  constructor(store = new MockDataStore()) {
+    this.media = clone(
+      store.heroes.flatMap((hero) => [hero.mainImage, ...hero.gallery]).filter((item): item is MediaFile => item !== undefined),
+    );
+  }
 
   async getAll(): Promise<MediaFile[]> {
     return clone(this.media);

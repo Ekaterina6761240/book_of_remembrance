@@ -57,7 +57,9 @@ export function HeroesTable({ heroes, districts, selectedIds, onToggleSelection,
               <div className={styles.bodyCell} role="cell" title={districtNames.get(hero.districtId)}>{districtNames.get(hero.districtId) ?? 'Не указан'}</div>
               <div className={`${styles.bodyCell} ${styles.muted}`} role="cell">{getLifeYears(hero)}</div>
               <div className={styles.bodyCell} role="cell">
-                <span className={`${styles.status} ${hero.status === 'draft' ? styles.draft : ''}`}>{hero.status === 'draft' ? 'Черновик' : 'Опубликован'}</span>
+                <span className={`${styles.status} ${hero.status !== 'published' ? styles.draft : ''}`}>
+                  {hero.status === 'published' ? 'Опубликован' : hero.status === 'scheduled' ? 'Запланирован' : 'Черновик'}
+                </span>
               </div>
               <div className={styles.rowActions} role="cell">
                 <button type="button" onClick={() => onEdit(hero)} aria-label={`Редактировать ${getFullName(hero)}`}><Edit3 size={15} /></button>

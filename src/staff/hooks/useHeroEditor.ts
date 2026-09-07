@@ -5,6 +5,7 @@ import { ROUTES } from '../../shared/constants/routes';
 import type { District, Hero, HeroFormData, HeroStatus, MediaFile } from '../../shared/types';
 
 export type PublishMode = 'now' | 'scheduled';
+type EditableHeroStatus = Exclude<HeroStatus, 'scheduled'>;
 
 export type HeroEditorValues = {
   firstName: string;
@@ -18,7 +19,7 @@ export type HeroEditorValues = {
   feat: string;
   awards: string;
   gallery: MediaFile[];
-  status: HeroStatus;
+  status: EditableHeroStatus;
   publishMode: PublishMode;
   publishDate: string;
   publishTime: string;
@@ -63,8 +64,8 @@ const toEditorValues = (hero: Hero): HeroEditorValues => ({
   feat: hero.feat ?? '',
   awards: hero.awards ?? '',
   gallery: hero.gallery,
-  status: hero.status ?? 'draft',
-  publishMode: hero.publishedAt ? 'scheduled' : 'now',
+  status: hero.status === 'published' || hero.status === 'scheduled' ? 'published' : 'draft',
+  publishMode: hero.status === 'scheduled' ? 'scheduled' : 'now',
   publishDate: hero.publishedAt?.slice(0, 10) ?? '',
   publishTime: hero.publishedAt?.slice(11, 16) ?? '',
 });
@@ -81,7 +82,9 @@ const toFormData = (values: HeroEditorValues): HeroFormData => ({
   feat: values.feat.trim() || undefined,
   awards: values.awards.trim() || undefined,
   gallery: values.gallery,
-  status: values.status,
+  status: values.status === 'published' && values.publishMode === 'scheduled'
+    ? 'scheduled'
+    : values.status,
   publishedAt: values.status === 'published' && values.publishMode === 'scheduled'
     ? `${values.publishDate}T${values.publishTime}:00`
     : undefined,
@@ -98,6 +101,12 @@ const validate = (values: HeroEditorValues): HeroEditorErrors => {
   if (values.status === 'published' && values.publishMode === 'scheduled') {
     if (!values.publishDate) errors.publishDate = 'Выберите дату публикации';
     if (!values.publishTime) errors.publishTime = 'Выберите время публикации';
+    if (values.publishDate && values.publishTime) {
+      const publicationTimestamp = Date.parse(`${values.publishDate}T${values.publishTime}:00`);
+      if (!Number.isFinite(publicationTimestamp) || publicationTimestamp <= Date.now()) {
+        errors.publishDate = 'Дата публикации должна быть в будущем';
+      }
+    }
   }
   return errors;
 };
