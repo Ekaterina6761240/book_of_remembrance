@@ -1,7 +1,6 @@
 import { createContext, type PropsWithChildren, useContext, useEffect, useState } from 'react';
 import type { AuthService } from '../../services';
 import type { User } from '../../shared/types';
-import { createAuthService } from './auth';
 
 type AuthContextValue = {
   user: User | null;
@@ -12,8 +11,11 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: PropsWithChildren) {
-  const [authService] = useState<AuthService>(createAuthService);
+type AuthProviderProps = PropsWithChildren<{
+  authService: AuthService;
+}>;
+
+export function AuthProvider({ children, authService }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 

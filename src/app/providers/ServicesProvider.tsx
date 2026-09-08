@@ -6,22 +6,23 @@ import {
   ScreenContentService,
   type Services,
 } from '../../services';
-import { createRepositories } from './repositories';
+import type { RepositoryContainer } from './runtime';
 
 const ServicesContext = createContext<Services | null>(null);
 
-const createServices = (): Services => {
-  const repositories = createRepositories();
-  return {
-    districts: new DistrictsService(repositories.districts),
-    heroes: new HeroesService(repositories.heroes),
-    media: new MediaService(repositories.media),
-    screenContent: new ScreenContentService(repositories.screenContent),
-  };
-};
+const createServices = (repositories: RepositoryContainer): Services => ({
+  districts: new DistrictsService(repositories.districts),
+  heroes: new HeroesService(repositories.heroes),
+  media: new MediaService(repositories.media),
+  screenContent: new ScreenContentService(repositories.screenContent),
+});
 
-export function ServicesProvider({ children }: PropsWithChildren) {
-  const [services] = useState(createServices);
+type ServicesProviderProps = PropsWithChildren<{
+  repositories: RepositoryContainer;
+}>;
+
+export function ServicesProvider({ children, repositories }: ServicesProviderProps) {
+  const [services] = useState(() => createServices(repositories));
   return <ServicesContext.Provider value={services}>{children}</ServicesContext.Provider>;
 }
 
