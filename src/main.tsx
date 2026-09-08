@@ -13,7 +13,10 @@ import '@fontsource/martian-mono/cyrillic-600.css';
 import '@fontsource/martian-mono/latin-600.css';
 import { AppProviders } from './app/providers/AppProviders';
 import { router } from './app/router';
+import { registerScreenServiceWorker } from './screen/cache';
 import './styles.css';
+
+registerScreenServiceWorker();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

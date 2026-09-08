@@ -14,14 +14,21 @@ export const useScreenHeroes = (): ScreenHeroesState => {
 
   useEffect(() => {
     let isActive = true;
+    let latestVersion = -1;
+    const applySnapshot = (snapshot: Awaited<ReturnType<typeof screenContent.getSnapshot>>) => {
+      if (!isActive || snapshot.version < latestVersion) return;
+      latestVersion = snapshot.version;
+      setState({ heroes: snapshot.heroes, isLoading: false, error: null });
+    };
+    const unsubscribe = screenContent.subscribe(applySnapshot);
     screenContent.getSnapshot()
-      .then((snapshot) => isActive && setState({ heroes: snapshot.heroes, isLoading: false, error: null }))
+      .then(applySnapshot)
       .catch((error: unknown) => isActive && setState({
         heroes: [],
         isLoading: false,
         error: error instanceof Error ? error.message : 'Не удалось загрузить героев',
       }));
-    return () => { isActive = false; };
+    return () => { isActive = false; unsubscribe(); };
   }, [screenContent]);
 
   return state;

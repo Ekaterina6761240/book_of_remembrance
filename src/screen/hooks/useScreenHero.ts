@@ -13,6 +13,7 @@ export const useScreenHero = (id: number | null) => {
 
   useEffect(() => {
     let isActive = true;
+    let latestVersion = -1;
     setHero(null);
     setError(null);
     if (id === null) {
@@ -23,15 +24,17 @@ export const useScreenHero = (id: number | null) => {
     }
     setIsLoading(true);
     setStatus('loading');
+    const applySnapshot = (snapshot: Awaited<ReturnType<typeof screenContent.getSnapshot>>) => {
+      if (!isActive || snapshot.version < latestVersion) return;
+      latestVersion = snapshot.version;
+      const publicHero = snapshot.heroes.find((hero) => hero.id === id) ?? null;
+      setHero(publicHero);
+      setIsLoading(false);
+      setStatus(publicHero ? 'success' : 'not-found');
+    };
+    const unsubscribe = screenContent.subscribe(applySnapshot);
     screenContent.getSnapshot()
-      .then((snapshot) => {
-        if (isActive) {
-          const publicHero = snapshot.heroes.find((hero) => hero.id === id) ?? null;
-          setHero(publicHero);
-          setIsLoading(false);
-          setStatus(publicHero ? 'success' : 'not-found');
-        }
-      })
+      .then(applySnapshot)
       .catch((error: unknown) => {
         if (isActive) {
           setError(error instanceof Error ? error.message : 'Не удалось загрузить героя');
@@ -39,7 +42,7 @@ export const useScreenHero = (id: number | null) => {
           setStatus('error');
         }
       });
-    return () => { isActive = false; };
+    return () => { isActive = false; unsubscribe(); };
   }, [id, screenContent]);
 
   return { hero, isLoading, error, status };

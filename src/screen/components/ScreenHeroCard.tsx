@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '../../shared/constants/routes';
 import type { Hero } from '../../shared/types';
 import { getHeroFullName } from '../../shared/utils';
+import { getOptimizedScreenMediaUrl } from '../utils/media';
 import { guardScreenLinkNavigation } from '../utils/navigationGuard';
 import styles from './ScreenHeroCard.module.css';
 
@@ -17,7 +18,7 @@ type ScreenHeroCardProps = {
 };
 
 export function ScreenHeroCard({ hero, isPressed, isActive, onPressStart, onPressEnd, onActivate }: ScreenHeroCardProps) {
-  const imageUrl = hero.mainImage?.thumbnailUrl ?? hero.mainImage?.url;
+  const imageUrl = hero.mainImage ? getOptimizedScreenMediaUrl(hero.mainImage) : undefined;
   const [hasImageError, setHasImageError] = useState(false);
   const fullName = getHeroFullName(hero);
 

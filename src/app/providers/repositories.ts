@@ -11,6 +11,7 @@ import type {
   MediaRepository,
   ScreenContentRepository,
 } from '../../repositories';
+import { OfflineScreenContentRepository, ScreenCacheService } from '../../screen/cache';
 
 export type RepositoryContainer = {
   districts: DistrictsRepository;
@@ -22,11 +23,12 @@ export type RepositoryContainer = {
 // Replace this factory with WordPress repository instances when the REST API is ready.
 export const createRepositories = (): RepositoryContainer => {
   const store = new MockDataStore();
+  const remoteScreenContent = new MockScreenContentRepository(store);
 
   return {
     districts: new MockDistrictsRepository(store),
     heroes: new MockHeroesRepository(store),
     media: new MockMediaRepository(store),
-    screenContent: new MockScreenContentRepository(store),
+    screenContent: new OfflineScreenContentRepository(remoteScreenContent, new ScreenCacheService()),
   };
 };

@@ -18,13 +18,16 @@ export const useScreenDistricts = (): ScreenDistrictsState => {
 
   useEffect(() => {
     let isActive = true;
+    let latestVersion = -1;
+    const applySnapshot = (snapshot: Awaited<ReturnType<typeof screenContent.getSnapshot>>) => {
+      if (!isActive || snapshot.version < latestVersion) return;
+      latestVersion = snapshot.version;
+      setState({ districts: snapshot.districts, isLoading: false, error: null });
+    };
+    const unsubscribe = screenContent.subscribe(applySnapshot);
 
     screenContent.getSnapshot()
-      .then((snapshot) => {
-        if (isActive) {
-          setState({ districts: snapshot.districts, isLoading: false, error: null });
-        }
-      })
+      .then(applySnapshot)
       .catch((error: unknown) => {
         if (isActive) {
           setState({
@@ -37,6 +40,7 @@ export const useScreenDistricts = (): ScreenDistrictsState => {
 
     return () => {
       isActive = false;
+      unsubscribe();
     };
   }, [screenContent]);
 
