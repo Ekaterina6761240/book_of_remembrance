@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Museum Core
  * Description: Backend for Book of Remembrance
- * Version: 0.3.0
+ * Version: 0.4.0
  * Author: Project Team
  */
 

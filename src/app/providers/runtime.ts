@@ -14,6 +14,15 @@ import type {
 } from '../../repositories';
 import { OfflineScreenContentRepository, ScreenCacheService } from '../../screen/cache';
 import type { AuthService } from '../../services';
+import { API_BASE_URL } from '../../api/config';
+import {
+  WordPressApiClient,
+  WordPressAuthService,
+  WordPressDistrictsRepository,
+  WordPressHeroesRepository,
+  WordPressMediaRepository,
+  WordPressScreenContentRepository,
+} from '../../wordpress';
 import { appConfig, type DataSourceMode } from '../config';
 
 export type RepositoryContainer = {
@@ -46,12 +55,27 @@ const createMockAdapters = (): RuntimeAdapters => {
   };
 };
 
+const createWordPressAdapters = (): RuntimeAdapters => {
+  const client = new WordPressApiClient(API_BASE_URL);
+  const remoteScreenContent = new WordPressScreenContentRepository(client);
+
+  return {
+    auth: new WordPressAuthService(client),
+    repositories: {
+      districts: new WordPressDistrictsRepository(client),
+      heroes: new WordPressHeroesRepository(client),
+      media: new WordPressMediaRepository(client),
+      screenContent: new OfflineScreenContentRepository(
+        remoteScreenContent,
+        new ScreenCacheService(),
+      ),
+    },
+  };
+};
+
 export const createRuntimeAdapters = (
   mode: DataSourceMode = appConfig.dataSource,
 ): RuntimeAdapters => {
   if (mode === 'mock') return createMockAdapters();
-
-  throw new Error(
-    'WordPress adapters are not implemented yet. Configure them in the runtime composition root before using VITE_DATA_SOURCE=wordpress.',
-  );
+  return createWordPressAdapters();
 };

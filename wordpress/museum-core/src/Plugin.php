@@ -13,12 +13,15 @@ require_once __DIR__ . '/Screen/PublicMediaDto.php';
 require_once __DIR__ . '/Screen/SnapshotBuilder.php';
 require_once __DIR__ . '/Screen/SnapshotStore.php';
 require_once __DIR__ . '/Screen/SnapshotHooks.php';
+require_once __DIR__ . '/Auth/AuthService.php';
+require_once __DIR__ . '/Auth/SameOriginGuard.php';
 require_once __DIR__ . '/Permissions/RoleManager.php';
 require_once __DIR__ . '/Rest/MediaDto.php';
 require_once __DIR__ . '/Rest/HeroesController.php';
 require_once __DIR__ . '/Rest/DistrictsController.php';
 require_once __DIR__ . '/Rest/MediaController.php';
 require_once __DIR__ . '/Rest/ScreenController.php';
+require_once __DIR__ . '/Rest/AuthController.php';
 
 use MuseumCore\Content\DistrictTaxonomy;
 use MuseumCore\Content\DistrictMeta;
@@ -28,13 +31,14 @@ use MuseumCore\Content\HeroMetaBoxes;
 use MuseumCore\Content\HeroPostType;
 use MuseumCore\Permissions\RoleManager;
 use MuseumCore\Rest\DistrictsController;
+use MuseumCore\Rest\AuthController;
 use MuseumCore\Rest\HeroesController;
 use MuseumCore\Rest\MediaController;
 use MuseumCore\Rest\ScreenController;
 use MuseumCore\Screen\SnapshotHooks;
 
 final class Plugin {
-	public const VERSION = '0.3.0';
+	public const VERSION = '0.4.0';
 
 	public function init(): void {
 		add_action( 'init', array( HeroPostType::class, 'register' ) );
@@ -45,10 +49,12 @@ final class Plugin {
 		add_action( 'rest_api_init', array( DistrictsController::class, 'register_routes' ) );
 		add_action( 'rest_api_init', array( MediaController::class, 'register_routes' ) );
 		add_action( 'rest_api_init', array( ScreenController::class, 'register_routes' ) );
+		add_action( 'rest_api_init', array( AuthController::class, 'register_routes' ) );
 		DistrictTaxonomy::register_hooks();
 		HeroMetaBoxes::register_hooks();
 		HeroDerivedFields::register_hooks();
 		SnapshotHooks::register();
+		AuthController::register_hooks();
 		add_action( 'plugins_loaded', array( $this, 'maybe_migrate' ) );
 	}
 

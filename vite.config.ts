@@ -108,12 +108,36 @@ const offlineShellPlugin = (): Plugin => ({
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', 'VITE_');
+  const wordpressProxyTarget = env.VITE_WORDPRESS_PROXY_TARGET?.trim()
+    || 'http://book-of-remembrance.local';
+  const wordpressOrigin = new URL(wordpressProxyTarget).origin;
 
   return {
     base: normalizeAssetBase(env.VITE_ASSET_BASE),
     plugins: [react(), offlineShellPlugin()],
     build: {
       manifest: true,
+    },
+    server: {
+      watch: {
+        ignored: ['**/museum-core/**'],
+      },
+      proxy: {
+        '/wp-json': {
+          target: wordpressProxyTarget,
+          changeOrigin: true,
+          configure(proxy) {
+            proxy.on('proxyReq', (proxyRequest) => {
+              if (proxyRequest.getHeader('origin')) {
+                proxyRequest.setHeader('origin', wordpressOrigin);
+              }
+              if (proxyRequest.getHeader('referer')) {
+                proxyRequest.setHeader('referer', `${wordpressOrigin}/`);
+              }
+            });
+          },
+        },
+      },
     },
   };
 });
