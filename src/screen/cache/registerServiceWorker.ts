@@ -1,11 +1,12 @@
+import { appConfig } from '../../app/config';
+
 export const registerScreenServiceWorker = (): void => {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
 
-  const baseUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
-  if (baseUrl.origin !== window.location.origin) return;
+  const scopePath = appConfig.basePath === '/' ? '/' : `${appConfig.basePath}/`;
 
   window.addEventListener('load', () => {
-    const serviceWorkerUrl = new URL('sw.js', baseUrl);
-    void navigator.serviceWorker.register(serviceWorkerUrl, { scope: baseUrl.pathname });
+    const serviceWorkerUrl = new URL(`${scopePath}sw.js`, window.location.origin);
+    void navigator.serviceWorker.register(serviceWorkerUrl, { scope: scopePath });
   }, { once: true });
 };

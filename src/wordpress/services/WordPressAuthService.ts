@@ -15,9 +15,14 @@ const toAuthError = (error: unknown): AuthError => {
 };
 
 export class WordPressAuthService implements AuthService {
-  constructor(private readonly client: WordPressApiClient) {}
+  private initialUser: User | null | undefined;
+
+  constructor(private readonly client: WordPressApiClient, initialUser?: User | null) {
+    this.initialUser = initialUser;
+  }
 
   async login(login: string, password: string, remember: boolean): Promise<User> {
+    this.initialUser = undefined;
     try {
       const response = mapAuthDto(await this.client.request('/auth/login', {
         method: 'POST',
@@ -33,6 +38,7 @@ export class WordPressAuthService implements AuthService {
   }
 
   async logout(): Promise<void> {
+    this.initialUser = undefined;
     try {
       await this.client.request('/auth/logout', { method: 'POST' });
     } catch (error) {
@@ -43,6 +49,11 @@ export class WordPressAuthService implements AuthService {
   }
 
   async getCurrentUser(): Promise<User | null> {
+    if (this.initialUser !== undefined) {
+      const user = this.initialUser;
+      this.initialUser = undefined;
+      return this.client.hasNonce() ? user : null;
+    }
     if (!this.client.hasNonce()) return null;
 
     try {

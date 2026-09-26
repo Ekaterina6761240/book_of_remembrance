@@ -1,3 +1,5 @@
+import { getMuseumAppRuntimeConfig } from './runtimeConfig';
+
 const normalizeAppBasePath = (value: string | undefined): string => {
   const path = value?.trim() || '/';
   if (path === '/') return '/';
@@ -20,6 +22,8 @@ export const resolveDataSourceMode = (
 };
 
 export const appConfig = Object.freeze({
-  basePath: normalizeAppBasePath(import.meta.env.VITE_APP_BASE_PATH),
+  basePath: normalizeAppBasePath(
+    getMuseumAppRuntimeConfig()?.appBasePath ?? import.meta.env.VITE_APP_BASE_PATH,
+  ),
   dataSource: resolveDataSourceMode(import.meta.env.VITE_DATA_SOURCE, import.meta.env.DEV),
 });

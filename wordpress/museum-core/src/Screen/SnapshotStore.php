@@ -21,7 +21,7 @@ final class SnapshotStore {
 		$token = self::acquire_lock();
 		if ( ! $token ) {
 			$active = self::get_active();
-			return null !== $active ? $active : self::unavailable_error();
+			return null !== $active ? $active : SnapshotBuilder::operation_error( 'lock.acquire', 'Не удалось получить rebuild lock при отсутствии active snapshot.', __FUNCTION__ );
 		}
 
 		try {
@@ -45,19 +45,21 @@ final class SnapshotStore {
 				'districts'    => $projection['districts'],
 				'heroes'       => $projection['heroes'],
 			);
+			if ( false === wp_json_encode( $snapshot ) ) {
+				return SnapshotBuilder::operation_error( 'json.encode', json_last_error_msg(), __FUNCTION__ );
+			}
 
 			$saved = null === $active
 				? add_option( self::OPTION, $snapshot, '', false )
 				: update_option( self::OPTION, $snapshot, false );
 			if ( ! $saved ) {
 				$concurrent = self::get_active();
-				return null !== $concurrent ? $concurrent : self::unavailable_error();
+				return null !== $concurrent ? $concurrent : SnapshotBuilder::operation_error( 'option.save', 'WordPress не сохранил snapshot option.', __FUNCTION__ );
 			}
 			return $snapshot;
 		} catch ( \Throwable $error ) {
-			unset( $error );
 			$active = self::get_active();
-			return null !== $active ? $active : self::unavailable_error();
+			return null !== $active ? $active : SnapshotBuilder::exception_error( $error, 'rebuild.exception', __FUNCTION__ );
 		} finally {
 			self::release_lock( $token );
 		}
@@ -95,7 +97,4 @@ final class SnapshotStore {
 			&& is_array( $snapshot['heroes'] );
 	}
 
-	private static function unavailable_error(): \WP_Error {
-		return new \WP_Error( 'screen_snapshot_unavailable', 'Публичный snapshot временно недоступен.', array( 'status' => 503 ) );
-	}
 }

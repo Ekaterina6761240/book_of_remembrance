@@ -15,6 +15,7 @@ require_once __DIR__ . '/Screen/SnapshotStore.php';
 require_once __DIR__ . '/Screen/SnapshotHooks.php';
 require_once __DIR__ . '/Auth/AuthService.php';
 require_once __DIR__ . '/Auth/SameOriginGuard.php';
+require_once __DIR__ . '/Frontend/FrontendApp.php';
 require_once __DIR__ . '/Permissions/RoleManager.php';
 require_once __DIR__ . '/Rest/MediaDto.php';
 require_once __DIR__ . '/Rest/HeroesController.php';
@@ -29,6 +30,7 @@ use MuseumCore\Content\HeroDerivedFields;
 use MuseumCore\Content\HeroMeta;
 use MuseumCore\Content\HeroMetaBoxes;
 use MuseumCore\Content\HeroPostType;
+use MuseumCore\Frontend\FrontendApp;
 use MuseumCore\Permissions\RoleManager;
 use MuseumCore\Rest\DistrictsController;
 use MuseumCore\Rest\AuthController;
@@ -55,6 +57,7 @@ final class Plugin {
 		HeroDerivedFields::register_hooks();
 		SnapshotHooks::register();
 		AuthController::register_hooks();
+		FrontendApp::register_hooks();
 		add_action( 'plugins_loaded', array( $this, 'maybe_migrate' ) );
 	}
 
@@ -64,6 +67,11 @@ final class Plugin {
 		DistrictMeta::register();
 		HeroMeta::register();
 		RoleManager::migrate( self::VERSION );
+		FrontendApp::activate();
+	}
+
+	public static function deactivate(): void {
+		FrontendApp::deactivate();
 	}
 
 	public function maybe_migrate(): void {

@@ -24,6 +24,7 @@ import {
   WordPressScreenContentRepository,
 } from '../../wordpress';
 import { appConfig, type DataSourceMode } from '../config';
+import { getMuseumAppRuntimeConfig } from '../runtimeConfig';
 
 export type RepositoryContainer = {
   districts: DistrictsRepository;
@@ -57,10 +58,12 @@ const createMockAdapters = (): RuntimeAdapters => {
 
 const createWordPressAdapters = (): RuntimeAdapters => {
   const client = new WordPressApiClient(API_BASE_URL);
+  const runtimeConfig = getMuseumAppRuntimeConfig();
+  if (runtimeConfig?.nonce) client.setNonce(runtimeConfig.nonce);
   const remoteScreenContent = new WordPressScreenContentRepository(client);
 
   return {
-    auth: new WordPressAuthService(client),
+    auth: new WordPressAuthService(client, runtimeConfig?.currentUser),
     repositories: {
       districts: new WordPressDistrictsRepository(client),
       heroes: new WordPressHeroesRepository(client),

@@ -1,6 +1,6 @@
 node_modules
 dist
+wordpress/museum-core/public/build
 .env
 *.local
 *.tsbuildinfo
-

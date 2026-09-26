@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/src/Plugin.php';
 
 register_activation_hook( __FILE__, array( MuseumCore\Plugin::class, 'activate' ) );
+register_deactivation_hook( __FILE__, array( MuseumCore\Plugin::class, 'deactivate' ) );
 
 $museum_core_plugin = new MuseumCore\Plugin();
 $museum_core_plugin->init();

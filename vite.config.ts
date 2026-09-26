@@ -12,19 +12,21 @@ const normalizeAssetBase = (value: string | undefined): string => {
 const isShellAsset = (fileName: string): boolean =>
   /\.(?:css|js|mjs|woff2?|otf|ttf|svg|png|jpe?g|webp|gif|ico)$/i.test(fileName);
 
-const createServiceWorkerSource = (files: string[], revision: string): string => `
+const createServiceWorkerSource = (files: string[], revision: string, assetBase: string): string => `
 const APP_CACHE_PREFIX = 'book-of-remembrance-';
 const SHELL_CACHE = APP_CACHE_PREFIX + 'shell-${revision}';
 const MEDIA_CACHE = APP_CACHE_PREFIX + 'screen-media-v1';
-const PRECACHE_PATHS = ${JSON.stringify(files)};
+const ASSET_BASE = ${JSON.stringify(assetBase)};
+const PRECACHE_PATHS = ${JSON.stringify(files.filter((fileName) => fileName !== 'index.html'))};
 const toScopeUrl = (path) => new URL(path, self.registration.scope).href;
-const PRECACHE_URLS = PRECACHE_PATHS.map(toScopeUrl);
-const SHELL_ENTRY = toScopeUrl('index.html');
+const toAssetUrl = (path) => new URL(path, new URL(ASSET_BASE, self.location.origin)).href;
+const PRECACHE_URLS = PRECACHE_PATHS.map(toAssetUrl);
+const SHELL_ENTRY = toScopeUrl('screen');
 const trimTrailingSlash = (path) => path.endsWith('/') ? path.slice(0, -1) : path;
 const SCREEN_ROOT = trimTrailingSlash(new URL('screen', self.registration.scope).pathname);
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)));
+  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll([...PRECACHE_URLS, SHELL_ENTRY])));
   self.skipWaiting();
 });
 
@@ -88,7 +90,7 @@ self.addEventListener('fetch', (event) => {
 });
 `;
 
-const offlineShellPlugin = (): Plugin => ({
+const offlineShellPlugin = (assetBase: string): Plugin => ({
   name: 'book-of-remembrance-offline-shell',
   apply: 'build',
   generateBundle(_options, bundle) {
@@ -101,22 +103,25 @@ const offlineShellPlugin = (): Plugin => ({
     this.emitFile({
       type: 'asset',
       fileName: 'sw.js',
-      source: createServiceWorkerSource(files, revision),
+      source: createServiceWorkerSource(files, revision, assetBase),
     });
   },
 });
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', 'VITE_');
+  const assetBase = normalizeAssetBase(env.VITE_ASSET_BASE);
   const wordpressProxyTarget = env.VITE_WORDPRESS_PROXY_TARGET?.trim()
     || 'http://book-of-remembrance.local';
   const wordpressOrigin = new URL(wordpressProxyTarget).origin;
 
   return {
-    base: normalizeAssetBase(env.VITE_ASSET_BASE),
-    plugins: [react(), offlineShellPlugin()],
+    base: assetBase,
+    plugins: [react(), offlineShellPlugin(assetBase)],
     build: {
       manifest: true,
+      outDir: 'wordpress/museum-core/public/build',
+      emptyOutDir: true,
     },
     server: {
       watch: {
