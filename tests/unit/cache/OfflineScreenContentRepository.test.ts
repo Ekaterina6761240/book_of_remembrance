@@ -88,6 +88,7 @@ describe('OfflineScreenContentRepository', () => {
 
     await expect(repository.getSnapshot()).resolves.toMatchObject({ version: 2 });
     await vi.waitFor(() => expect(remote.versionCalls).toBe(1));
+    await vi.waitFor(() => expect(cache.mediaVersions).toContain(2));
     expect(remote.snapshotCalls).toBe(0);
   });
 

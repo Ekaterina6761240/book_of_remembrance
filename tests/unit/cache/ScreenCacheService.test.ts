@@ -12,11 +12,16 @@ import {
 class MemoryCacheStorage {
   readonly names = new Set<string>();
   readonly addedUrls: string[] = [];
+  readonly cachedUrls = new Set<string>();
 
   async open(name: string): Promise<Cache> {
     this.names.add(name);
     return {
-      add: async (url: RequestInfo | URL) => { this.addedUrls.push(String(url)); },
+      match: async (url: RequestInfo | URL) => this.cachedUrls.has(String(url)) ? new Response() : undefined,
+      add: async (url: RequestInfo | URL) => {
+        this.addedUrls.push(String(url));
+        this.cachedUrls.add(String(url));
+      },
     } as Cache;
   }
 
@@ -53,13 +58,28 @@ describe('ScreenCacheService', () => {
     await expect(service.read()).resolves.toEqual(cached);
   });
 
-  it('pre-caches only media URLs supplied by the public screen snapshot', async () => {
+  it('pre-caches full and thumbnail media URLs supplied by the public screen snapshot', async () => {
     const cacheStorage = new MemoryCacheStorage();
     const service = new ScreenCacheService(new IDBFactory(), cacheStorage as unknown as CacheStorage);
 
     await service.cacheMedia(content);
 
     expect(cacheStorage.addedUrls).toEqual(getScreenMediaUrls(content));
+    expect(cacheStorage.addedUrls).toEqual([
+      '/media/screen/hero.webp',
+      '/media/screen/hero-card.webp',
+      '/media/screen/document.webp',
+    ]);
+  });
+
+  it('does not download media that is already cached', async () => {
+    const cacheStorage = new MemoryCacheStorage();
+    cacheStorage.cachedUrls.add('/media/screen/hero.webp');
+    const service = new ScreenCacheService(new IDBFactory(), cacheStorage as unknown as CacheStorage);
+
+    await service.cacheMedia(content);
+
+    expect(cacheStorage.addedUrls).not.toContain('/media/screen/hero.webp');
     expect(cacheStorage.addedUrls).toEqual([
       '/media/screen/hero-card.webp',
       '/media/screen/document.webp',

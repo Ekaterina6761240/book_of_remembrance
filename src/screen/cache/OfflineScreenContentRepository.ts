@@ -55,6 +55,8 @@ export class OfflineScreenContentRepository implements OfflineCapableScreenConte
     this.assertGeneration(generation);
     if (cached) {
       this.activeSnapshot = clone(cached.data);
+      // Repair an incomplete media cache after interrupted downloads or an app update.
+      void this.cache.cacheMedia(cached.data).catch(() => undefined);
       // Stale content remains valid offline; staleness is metadata, never expiry.
       this.startBackgroundRefresh(cached.version, generation);
       return clone(cached.data);

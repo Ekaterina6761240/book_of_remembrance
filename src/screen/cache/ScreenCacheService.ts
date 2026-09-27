@@ -1,5 +1,4 @@
 import type { ScreenContentSnapshot } from '../../repositories';
-import { getOptimizedScreenMediaUrl } from '../utils/media';
 import {
   APP_CACHE_PREFIX,
   CACHE_STALE_AFTER_MS,
@@ -66,7 +65,8 @@ export const getScreenMediaUrls = (snapshot: ScreenContentSnapshot): string[] =>
   snapshot.heroes.forEach((hero) => {
     [hero.mainImage, ...hero.gallery].forEach((media) => {
       if (!media) return;
-      urls.add(getOptimizedScreenMediaUrl(media));
+      urls.add(media.url);
+      if (media.thumbnailUrl) urls.add(media.thumbnailUrl);
     });
   });
   return [...urls];
@@ -105,7 +105,10 @@ export class ScreenCacheService implements ScreenContentCache {
 
   async cacheMedia(snapshot: ScreenContentSnapshot): Promise<void> {
     const cache = await this.cacheStorage.open(SCREEN_MEDIA_CACHE_NAME);
-    await Promise.allSettled(getScreenMediaUrls(snapshot).map((url) => cache.add(url)));
+    await Promise.allSettled(getScreenMediaUrls(snapshot).map(async (url) => {
+      const cached = await cache.match(url, { ignoreVary: true });
+      if (!cached) await cache.add(url);
+    }));
   }
 
   async clear(): Promise<void> {
