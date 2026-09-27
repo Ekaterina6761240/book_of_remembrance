@@ -1,4 +1,4 @@
-import { type FormEvent, useMemo, useState } from 'react';
+import { type FormEvent, type MouseEvent, useMemo, useState } from 'react';
 import { ArrowLeft, Search, X } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '../../shared/constants/routes';
@@ -25,6 +25,7 @@ export function ScreenHeroesPage() {
   const [pressedHeroId, setPressedHeroId] = useState<number | null>(null);
   const [isKeyboardOpen, setKeyboardOpen] = useState(false);
   const districtId = parseDistrictId(searchParams.get('district'));
+  const isCompactViewport = typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches;
 
   const visibleHeroes = useMemo(
     () => filterAndSortHeroes(heroes, { districtId, firstLetter: activeLetter, query }),
@@ -52,9 +53,23 @@ export function ScreenHeroesPage() {
     setKeyboardOpen(false);
   };
 
-  const handleSearch = (event: FormEvent) => {
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isCompactViewport) {
+      setKeyboardOpen(true);
+      event.currentTarget.querySelector('input')?.blur();
+      return;
+    }
     setKeyboardOpen(false);
+  };
+
+  const handleBack = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isCompactViewport && isKeyboardOpen) {
+      event.preventDefault();
+      setKeyboardOpen(false);
+      return;
+    }
+    guardScreenLinkNavigation(event);
   };
 
   const appendVirtualKey = (key: string) => {
@@ -67,9 +82,9 @@ export function ScreenHeroesPage() {
   };
 
   return (
-    <main className={styles.page} data-keyboard-open={isKeyboardOpen || undefined}>
+    <main className={styles.page} data-keyboard-open={isKeyboardOpen || undefined} data-has-query={normalizedQuery || undefined}>
       <header className={styles.header}>
-        <Link className={styles.backLink} to={ROUTES.screenDistricts} onClick={guardScreenLinkNavigation} aria-label="Вернуться к выбору района">
+        <Link className={styles.backLink} to={ROUTES.screenDistricts} onClick={handleBack} aria-label="Вернуться к выбору района">
           <span className={styles.backIcon}><ArrowLeft aria-hidden="true" strokeWidth={1.35} /></span>
           <span>Назад</span>
         </Link>
@@ -84,7 +99,7 @@ export function ScreenHeroesPage() {
               placeholder="Имя, фамилия"
               aria-label="Поиск героя по имени, фамилии или отчеству"
               autoComplete="off"
-              inputMode="none"
+              inputMode={isCompactViewport ? 'search' : 'none'}
               spellCheck={false}
             />
             {query && (
@@ -95,6 +110,7 @@ export function ScreenHeroesPage() {
           </div>
           <button className={styles.searchButton} type="submit" aria-label="Найти героя">
             <Search aria-hidden="true" strokeWidth={1.5} />
+            <span className={styles.searchButtonLabel}>Начать поиск</span>
           </button>
         </form>
 
@@ -141,7 +157,7 @@ export function ScreenHeroesPage() {
         )}
       </section>
 
-      {isKeyboardOpen && (
+      {isKeyboardOpen && !isCompactViewport && (
         <>
           <button className={styles.keyboardOverlay} type="button" onClick={() => setKeyboardOpen(false)} aria-label="Закрыть экранную клавиатуру" />
           <VirtualKeyboard

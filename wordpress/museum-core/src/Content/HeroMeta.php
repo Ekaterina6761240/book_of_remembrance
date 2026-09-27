@@ -51,8 +51,27 @@ final class HeroMeta {
 			return '';
 		}
 
+		if ( 1 === preg_match( '/^\d{4}$/', $value ) ) {
+			return $value;
+		}
+
 		$date = DateTimeImmutable::createFromFormat( '!Y-m-d', $value, wp_timezone() );
 		return false !== $date && $date->format( 'Y-m-d' ) === $value ? $value : '';
+	}
+
+
+	public static function dates_are_chronological( string $birth_date, string $death_date ): bool {
+		if ( '' === $birth_date || '' === $death_date ) {
+			return true;
+		}
+
+		$birth_year = (int) substr( $birth_date, 0, 4 );
+		$death_year = (int) substr( $death_date, 0, 4 );
+		if ( $birth_year !== $death_year ) {
+			return $birth_year < $death_year;
+		}
+
+		return 10 !== strlen( $birth_date ) || 10 !== strlen( $death_date ) || $birth_date <= $death_date;
 	}
 
 	public static function sanitize_gallery_ids( $value ): array {

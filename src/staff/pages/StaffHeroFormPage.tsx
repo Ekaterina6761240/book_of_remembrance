@@ -87,11 +87,12 @@ export function StaffHeroFormPage() {
             <div className={styles.dateFields}>
               <label className={styles.field}>
                 <span>Дата рождения</span>
-                <input type="date" value={editor.values.birthDate} onChange={(event) => editor.updateField('birthDate', event.target.value)} aria-label="Дата рождения" />
+                <input type="text" inputMode="numeric" placeholder="ГГГГ или ГГГГ-ММ-ДД" value={editor.values.birthDate} onChange={(event) => editor.updateField('birthDate', event.target.value)} aria-label="Дата рождения" aria-invalid={Boolean(editor.errors.birthDate)} />
+                {editor.errors.birthDate && <small>{editor.errors.birthDate}</small>}
               </label>
               <label className={styles.field}>
                 <span>Дата смерти</span>
-                <input type="date" value={editor.values.deathDate} onChange={(event) => editor.updateField('deathDate', event.target.value)} aria-label="Дата смерти" aria-invalid={Boolean(editor.errors.deathDate)} />
+                <input type="text" inputMode="numeric" placeholder="ГГГГ или ГГГГ-ММ-ДД" value={editor.values.deathDate} onChange={(event) => editor.updateField('deathDate', event.target.value)} aria-label="Дата смерти" aria-invalid={Boolean(editor.errors.deathDate)} />
                 {editor.errors.deathDate && <small>{editor.errors.deathDate}</small>}
               </label>
             </div>

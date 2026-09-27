@@ -68,10 +68,7 @@ export function ScreenHeroCard({
 				)}
 			</span>
 			<span className={styles.name}>
-				<span>{hero.lastName}</span>
-				<span>
-					{[hero.firstName, hero.middleName].filter(Boolean).join(' ')}
-				</span>
+				{`${hero.lastName}\n${[hero.firstName, hero.middleName].filter(Boolean).join(' ')}`}
 			</span>
 		</Link>
 	)

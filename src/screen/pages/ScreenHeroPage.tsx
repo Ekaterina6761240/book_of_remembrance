@@ -36,13 +36,15 @@ export function ScreenHeroPage() {
     return <main className={`${styles.page} ${styles.statePage}`}><div className={styles.stateBack}><ScreenBackButton onClick={goBack} /></div><section className={styles.state} role={status === 'error' ? 'alert' : undefined}><h1>{title}</h1>{status !== 'loading' && <p>{status === 'not-found' ? 'Проверьте адрес страницы или вернитесь к списку героев.' : error}</p>}</section></main>;
   }
   const tabText = activeTab === 'biography' ? hero.biography : activeTab === 'feat' ? hero.feat : hero.awards;
-  const paragraphs = tabText?.split(/\n+/).map((part) => part.trim()).filter(Boolean) ?? [];
+  const contentItems = tabText?.split(/\n+/)
+    .map((part) => part.trim().replace(/^[•·*—–-]+\s*/, ''))
+    .filter(Boolean) ?? [];
   return <main className={styles.page}>
     <div className={styles.back}><ScreenBackButton onClick={goBack} /></div>
     <div className={styles.tabs}><HeroTabs active={activeTab} onChange={setActiveTab} /></div>
     <div className={styles.identity}><h1>{getHeroFullName(hero)}</h1><p>{formatHeroLifeDates(hero)}</p></div>
     <div className={styles.media}><HeroMedia media={media} index={mediaIndex} onIndexChange={setMediaIndex} onOpen={() => setGalleryOpen(true)} /></div>
-    <section className={styles.content} aria-live="polite">{paragraphs.length ? paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>) : <p className={styles.empty}>Информация отсутствует</p>}</section>
+    <section className={styles.content} aria-live="polite">{activeTab === 'awards' && contentItems.length ? <ul>{contentItems.map((item, index) => <li key={index}>{item}</li>)}</ul> : contentItems.length ? contentItems.map((paragraph, index) => <p key={index}>{paragraph}</p>) : <p className={styles.empty}>Информация отсутствует</p>}</section>
     {galleryOpen && media.length > 0 && <HeroGallery media={media} index={mediaIndex} onIndexChange={setMediaIndex} onClose={() => setGalleryOpen(false)} />}
   </main>;
 }

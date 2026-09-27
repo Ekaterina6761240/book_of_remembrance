@@ -7,6 +7,7 @@ const MONTHS = [
 
 export const formatHeroDate = (value?: string): string => {
   if (!value) return '';
+  if (/^\d{4}$/.test(value)) return value;
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
   if (!match) return value;
   const month = Number(match[2]) - 1;
@@ -14,8 +15,10 @@ export const formatHeroDate = (value?: string): string => {
 };
 
 export const formatHeroLifeDates = (hero: Hero): string => {
-  const dates = [formatHeroDate(hero.birthDate), formatHeroDate(hero.deathDate)].filter(Boolean);
-  return dates.length ? dates.join(' — ') : 'Даты жизни не указаны';
+  const birthDate = formatHeroDate(hero.birthDate);
+  const deathDate = formatHeroDate(hero.deathDate);
+  if (!birthDate && !deathDate) return 'Даты жизни не указаны';
+  return `${birthDate || 'Неизвестно'} — ${deathDate || 'неизвестно'}`;
 };
 
 export const getHeroMedia = (hero: Hero): MediaFile[] => {

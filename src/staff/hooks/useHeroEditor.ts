@@ -94,12 +94,36 @@ const toFormData = (values: HeroEditorValues): HeroFormData => {
   };
 };
 
+const isValidHeroDate = (value: string): boolean => {
+  if (/^\d{4}$/.test(value)) return true;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return date.getUTCFullYear() === Number(match[1])
+    && date.getUTCMonth() === Number(match[2]) - 1
+    && date.getUTCDate() === Number(match[3]);
+};
+
+const areHeroDatesChronological = (birthDate: string, deathDate: string): boolean => {
+  const birthYear = Number(birthDate.slice(0, 4));
+  const deathYear = Number(deathDate.slice(0, 4));
+  if (birthYear !== deathYear) return birthYear < deathYear;
+  return birthDate.length < 10 || deathDate.length < 10 || birthDate <= deathDate;
+};
+
 const validate = (values: HeroEditorValues): HeroEditorErrors => {
   const errors: HeroEditorErrors = {};
   if (!values.lastName.trim()) errors.lastName = 'Укажите фамилию';
   if (!values.firstName.trim()) errors.firstName = 'Укажите имя';
   if (values.districtId === null) errors.districtId = 'Выберите район';
-  if (values.birthDate && values.deathDate && values.deathDate < values.birthDate) {
+  if (values.birthDate && !isValidHeroDate(values.birthDate)) {
+    errors.birthDate = 'Укажите год или полную дату в формате ГГГГ-ММ-ДД';
+  }
+  if (values.deathDate && !isValidHeroDate(values.deathDate)) {
+    errors.deathDate = 'Укажите год или полную дату в формате ГГГГ-ММ-ДД';
+  }
+  if (values.birthDate && values.deathDate && !errors.birthDate && !errors.deathDate
+    && !areHeroDatesChronological(values.birthDate, values.deathDate)) {
     errors.deathDate = 'Дата смерти не может быть раньше даты рождения';
   }
   if (values.status === 'published' && values.publishMode === 'scheduled') {

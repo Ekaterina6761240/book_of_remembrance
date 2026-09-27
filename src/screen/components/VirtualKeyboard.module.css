@@ -2,19 +2,19 @@
   position: absolute;
   z-index: 8;
   right: 0;
-  bottom: 42px;
+  bottom: 64px;
   left: 0;
   display: flex;
-  width: min(1000px, calc(100% - 160px));
+  width: min(996px, calc(100% - 320px));
   margin-inline: auto;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .row {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .key,
@@ -31,29 +31,33 @@
 
 .key {
   display: grid;
-  width: 54px;
-  height: 54px;
+  width: 72px;
+  height: 72px;
   padding: 0;
-  border-radius: 50%;
-  font-size: 24px;
+  border-radius: 70px;
+  font-size: 32px;
   place-items: center;
 }
 
 .backspace {
-  width: 108px;
-  border-radius: 30px;
+  display: flex;
+  width: 156px;
+  padding-right: 20px;
+  border-radius: 70px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .backspace svg {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
 }
 
 .space {
   width: 100%;
-  height: 54px;
+  height: 72px;
   padding: 0;
-  border-radius: 30px;
+  border-radius: 70px;
 }
 
 .space span {
@@ -66,11 +70,11 @@
 
 .closeButton {
   position: absolute;
-  right: -72px;
-  bottom: 112px;
+  top: -4px;
+  right: -68px;
   display: grid;
-  width: 54px;
-  height: 54px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border-radius: 50%;
   place-items: center;
@@ -97,34 +101,35 @@
 
 @media (min-width: 2560px) {
   .keyboard {
-    bottom: 84px;
-    width: min(2000px, calc(100% - 320px));
-    gap: 16px;
+    bottom: 128px;
+    width: min(1992px, calc(100% - 640px));
+    gap: 24px;
   }
 
   .row {
-    gap: 16px;
+    gap: 24px;
   }
 
   .key {
-    width: 108px;
-    height: 108px;
-    font-size: 48px;
+    width: 144px;
+    height: 144px;
+    font-size: 64px;
   }
 
   .backspace {
-    width: 216px;
-    border-radius: 60px;
+    width: 312px;
+    padding-right: 40px;
+    border-radius: 140px;
   }
 
   .backspace svg {
-    width: 68px;
-    height: 68px;
+    width: 80px;
+    height: 80px;
   }
 
   .space {
-    height: 108px;
-    border-radius: 60px;
+    height: 144px;
+    border-radius: 140px;
   }
 
   .space span {
@@ -133,10 +138,10 @@
   }
 
   .closeButton {
-    right: -144px;
-    bottom: 224px;
-    width: 108px;
-    height: 108px;
+    top: -8px;
+    right: -136px;
+    width: 96px;
+    height: 96px;
   }
 
   .closeButton svg {
@@ -147,47 +152,6 @@
 
 @media (max-width: 700px) {
   .keyboard {
-    position: fixed;
-    bottom: max(12px, env(safe-area-inset-bottom));
-    width: calc(100% - 20px);
-    gap: 5px;
-  }
-
-  .row {
-    gap: 4px;
-  }
-
-  .key {
-    width: calc((100vw - 66px) / 12);
-    height: calc((100vw - 66px) / 12);
-    min-width: 25px;
-    min-height: 25px;
-    font-size: clamp(12px, 3.5vw, 17px);
-  }
-
-  .backspace {
-    width: calc((100vw - 66px) / 6);
-    border-radius: 24px;
-  }
-
-  .backspace svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .space {
-    height: 34px;
-  }
-
-  .closeButton {
-    right: 0;
-    bottom: 78px;
-    width: 34px;
-    height: 34px;
-  }
-
-  .closeButton svg {
-    width: 20px;
-    height: 20px;
+    display: none;
   }
 }

@@ -318,10 +318,10 @@ final class HeroesController {
 
 		foreach ( array( 'birth_date', 'death_date' ) as $date_field ) {
 			if ( '' !== $data[ $date_field ] && '' === HeroMeta::sanitize_date( $data[ $date_field ] ) ) {
-				return self::validation_error( $date_field, 'Дата должна иметь формат YYYY-MM-DD и быть календарно корректной.' );
+				return self::validation_error( $date_field, 'Дата должна содержать год YYYY или полную календарную дату YYYY-MM-DD.' );
 			}
 		}
-		if ( '' !== $data['birth_date'] && '' !== $data['death_date'] && $data['death_date'] < $data['birth_date'] ) {
+		if ( '' !== $data['birth_date'] && '' !== $data['death_date'] && ! HeroMeta::dates_are_chronological( $data['birth_date'], $data['death_date'] ) ) {
 			return self::validation_error( 'death_date', 'Дата смерти не может быть раньше даты рождения.' );
 		}
 

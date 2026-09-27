@@ -1,142 +1,42 @@
 .picker {
-  --item-height: min(12.6vh, 136px);
-  width: 100%;
-  height: 100dvh;
-  padding-block: calc((100dvh - var(--item-height)) / 2);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scroll-snap-type: y mandatory;
-  scrollbar-width: none;
-  touch-action: pan-y;
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 13%, #000 84%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 13%, #000 84%, transparent 100%);
-  -webkit-overflow-scrolling: touch;
+  --item-height:min(12.6vh,136px);
+  width:100%;
+  height:100dvh;
+  padding-block:calc((100dvh - var(--item-height)) / 2);
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  scroll-snap-type:y mandatory;
+  scrollbar-width:none;
+  touch-action:pan-y;
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 84%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 84%,transparent 100%);
+  -webkit-overflow-scrolling:touch;
+}
+.picker::-webkit-scrollbar { display:none; }
+.option { display:flex; width:100%; min-width:100%; max-width:100%; height:var(--item-height); margin:0; padding:0; border:0; align-items:center; color:var(--screen-beige); background:transparent; font:700 min(6.25vw,13vh)/.95 "Bebas Neue Cyrillic",sans-serif; letter-spacing:-.03em; text-align:left; text-transform:uppercase; white-space:nowrap; box-sizing:border-box; cursor:pointer; scroll-snap-align:center; scroll-snap-stop:always; transform-origin:left center; transition:color 160ms linear,filter 160ms linear,opacity 160ms linear,transform 160ms linear; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.option[aria-selected="true"] { z-index:1; color:var(--screen-red); opacity:1; filter:none; transform:scale(1); }
+.option[data-distance="1"] { opacity:.82; filter:blur(.4px); transform:scale(.98); }
+.option[data-distance="2"] { opacity:.55; filter:blur(2px); transform:scale(.96); }
+.option[data-distance="3"] { opacity:.3; filter:blur(6px); transform:scale(.94); }
+.option[data-distance="4"] { opacity:.14; filter:blur(13px); transform:scale(.92); }
+.option[data-size="condensed"] { font-size:min(4.7vw,10vh); }
+.option[data-size="compact"] { font-size:min(3.4vw,8vh); }
+.option:active { color:var(--screen-red); }
+.option:focus-visible { outline:5px solid var(--screen-beige); outline-offset:-5px; }
+
+@media (min-width:2560px) { .picker{--item-height:min(12.6vh,272px)}.option:focus-visible{outline-width:10px;outline-offset:-10px} }
+
+@media (max-width:700px) {
+  .picker { --item-height:64px; height:100%; padding-block:0; overflow-y:auto; scroll-snap-type:none; mask-image:none; -webkit-mask-image:none; }
+  .option,
+  .option[data-size="regular"],
+  .option[data-size="condensed"],
+  .option[data-size="compact"] { min-height:var(--item-height); height:var(--item-height); justify-content:flex-start; padding:0 16px; color:var(--screen-beige); font-size:42px; text-align:left; opacity:1; filter:none; transform:none; transform-origin:left center; scroll-snap-align:none; }
+  .option[data-size="condensed"] { font-size:34px; }
+  .option[data-size="compact"] { font-size:26px; }
+  .option[aria-selected="true"] { color:var(--screen-beige); }
+  .option:active { color:var(--screen-red); }
 }
 
-.picker::-webkit-scrollbar {
-  display: none;
-}
-
-.option {
-  display: flex;
-  width: 100%;
-  min-width: 100%;
-  max-width: 100%;
-  height: var(--item-height);
-  margin: 0;
-  padding: 0;
-  border: 0;
-  align-items: center;
-  color: var(--screen-beige);
-  background: transparent;
-  font-family: "Bebas Neue Cyrillic", sans-serif;
-  font-size: min(6.25vw, 13vh);
-  font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  text-align: left;
-  text-transform: uppercase;
-  white-space: nowrap;
-  box-sizing: border-box;
-  cursor: pointer;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  transform-origin: left center;
-  transition: color 160ms linear, filter 160ms linear, opacity 160ms linear, transform 160ms linear;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.option[aria-selected="true"] {
-  z-index: 1;
-  color: var(--screen-red);
-  opacity: 1;
-  filter: none;
-  transform: scale(1);
-}
-
-.option[data-distance="1"] {
-  opacity: 0.82;
-  filter: blur(0.4px);
-  transform: scale(0.98);
-}
-
-.option[data-distance="2"] {
-  opacity: 0.55;
-  filter: blur(2px);
-  transform: scale(0.96);
-}
-
-.option[data-distance="3"] {
-  opacity: 0.3;
-  filter: blur(6px);
-  transform: scale(0.94);
-}
-
-.option[data-distance="4"] {
-  opacity: 0.14;
-  filter: blur(13px);
-  transform: scale(0.92);
-}
-
-.option[data-size="condensed"] {
-  font-size: min(4.7vw, 10vh);
-}
-
-.option[data-size="compact"] {
-  font-size: min(3.4vw, 8vh);
-}
-
-.option:active {
-  color: var(--screen-red);
-}
-
-.option:focus-visible {
-  outline: 5px solid var(--screen-beige);
-  outline-offset: -5px;
-}
-
-@media (min-width: 2560px) {
-  .picker {
-    --item-height: min(12.6vh, 272px);
-  }
-
-  .option:focus-visible {
-    outline-width: 10px;
-    outline-offset: -10px;
-  }
-}
-
-@media (max-width: 1100px) {
-  .picker {
-    --mobile-header-height: 190px;
-    --item-height: clamp(66px, 10.5dvh, 94px);
-    height: calc(100dvh - var(--mobile-header-height));
-    padding-block: calc((100dvh - var(--mobile-header-height) - var(--item-height)) / 2);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 83%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 83%, transparent 100%);
-  }
-
-  .option {
-    justify-content: center;
-    padding-inline: 18px;
-    font-size: clamp(38px, 9.7vw, 72px);
-    text-align: center;
-    transform-origin: center;
-  }
-
-  .option[data-size="condensed"] {
-    font-size: clamp(32px, 7.8vw, 58px);
-  }
-
-  .option[data-size="compact"] {
-    font-size: clamp(25px, 5.9vw, 46px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .option {
-    transition: none;
-  }
-}
+@media (prefers-reduced-motion:reduce) { .option{transition:none} }

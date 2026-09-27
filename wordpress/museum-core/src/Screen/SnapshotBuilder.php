@@ -104,7 +104,7 @@ final class SnapshotBuilder {
 
 		$birth_date = self::nullable_meta( $post->ID, HeroMeta::BIRTH_DATE );
 		$death_date = self::nullable_meta( $post->ID, HeroMeta::DEATH_DATE );
-		if ( ( $birth_date && '' === HeroMeta::sanitize_date( $birth_date ) ) || ( $death_date && '' === HeroMeta::sanitize_date( $death_date ) ) || ( $birth_date && $death_date && $death_date < $birth_date ) ) {
+		if ( ( $birth_date && '' === HeroMeta::sanitize_date( $birth_date ) ) || ( $death_date && '' === HeroMeta::sanitize_date( $death_date ) ) || ! HeroMeta::dates_are_chronological( $birth_date, $death_date ) ) {
 			return self::build_error( 'heroes.dates', 'У опубликованного героя некорректны birth_date или death_date.', __FUNCTION__, array( 'hero_id' => $hero_id ) );
 		}
 

@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, UserRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import imageFallbackUrl from '../../shared/assets/image.svg';
 import { useEffect, useState } from 'react';
 import type { MediaFile } from '../../shared/types';
 import { getOptimizedScreenMediaUrl } from '../utils/media';
@@ -18,8 +19,11 @@ export function HeroMedia({ media, index, onIndexChange, onOpen }: Props) {
       <button className={styles.photoButton} type="button" onClick={onOpen} aria-label="Открыть фотографию на весь экран">
         <img src={getOptimizedScreenMediaUrl(current)} alt={current.name || 'Фотография героя'} draggable={false} onError={() => setFailed(true)} />
       </button>
-    ) : <div className={styles.placeholder}><UserRound aria-hidden="true" /><span>Фотография отсутствует</span></div>}
-    {media.length > 0 && <div className={styles.controls}>
+    ) : <div className={styles.placeholder}><img src={imageFallbackUrl} alt="" aria-hidden="true" draggable={false} /></div>}
+    {media.length > 1 && <div className={styles.dots} aria-hidden="true">
+      {media.map((item, dotIndex) => <span key={item.id} data-active={dotIndex === index || undefined} />)}
+    </div>}
+    {media.length > 1 && <div className={styles.controls}>
       <button type="button" onClick={() => onIndexChange(index - 1)} disabled={!canPrev} aria-label="Предыдущая фотография"><ArrowLeft aria-hidden="true" /></button>
       <span aria-live="polite">{index + 1}/{media.length}</span>
       <button type="button" onClick={() => onIndexChange(index + 1)} disabled={!canNext} aria-label="Следующая фотография"><ArrowRight aria-hidden="true" /></button>

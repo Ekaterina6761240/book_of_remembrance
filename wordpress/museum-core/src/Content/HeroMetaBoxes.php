@@ -146,7 +146,7 @@ final class HeroMetaBoxes {
 	}
 
 	private static function render_date_row( int $post_id, string $meta_key, string $label ): void {
-		self::render_input_row( $post_id, $meta_key, $label, 'date' );
+		self::render_input_row( $post_id, $meta_key, $label . ' (ГГГГ или ГГГГ-ММ-ДД)', 'text' );
 	}
 
 	private static function render_input_row( int $post_id, string $meta_key, string $label, string $type ): void {

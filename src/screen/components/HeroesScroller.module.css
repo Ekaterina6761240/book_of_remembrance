@@ -1,201 +1,238 @@
 .scroller {
-	display: flex;
-	min-height: 0;
-	flex: 1;
-	flex-direction: column;
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 .viewport {
-	min-height: 0;
-	flex: 1;
-	overflow-x: auto;
-	overflow-y: hidden;
-	overscroll-behavior: contain;
-	scroll-snap-type: x proximity;
-	scrollbar-width: none;
-	touch-action: pan-x;
-	cursor: grab;
-	mask-image: linear-gradient(
-		to right,
-		rgb(0 0 0 / 24%) 0,
-		#000 7%,
-		#000 93%,
-		rgb(0 0 0 / 24%) 100%
-	);
-	-webkit-mask-image: linear-gradient(
-		to right,
-		rgb(0 0 0 / 24%) 0,
-		#000 7%,
-		#000 93%,
-		rgb(0 0 0 / 24%) 100%
-	);
-	-webkit-overflow-scrolling: touch;
+  min-height: 0;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  cursor: grab;
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 24%) 0,
+    #000 5.625vw,
+    #000 calc(100% - 5.625vw),
+    rgb(0 0 0 / 24%) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 24%) 0,
+    #000 5.625vw,
+    #000 calc(100% - 5.625vw),
+    rgb(0 0 0 / 24%) 100%
+  );
+  -webkit-overflow-scrolling: touch;
 }
 
 .viewport:active {
-	cursor: grabbing;
+  cursor: grabbing;
 }
 
 .viewport::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 .list {
-	display: flex;
-	width: max-content;
-	min-width: 100%;
-	gap: 16px;
-	align-items: flex-start;
+  display: flex;
+  width: max-content;
+  margin-inline: auto;
+  gap: 8px;
+  align-items: flex-start;
 }
 
 .list > * {
-	width: calc((100vw - 72px) / 6.15);
-	flex: 0 0 calc((100vw - 72px) / 6.15);
+  width: calc((100vw - 72px) / 6.15);
+  flex: 0 0 calc((100vw - 72px) / 6.15);
 }
 
 .controls {
-	display: grid;
-	height: 102px;
-	padding: 20px 72px 28px;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: center;
-	gap: 34px;
+  position: absolute;
+  right: 0;
+  bottom: 24px;
+  left: 0;
+  display: grid;
+  height: 88px;
+  padding: 0 5.625vw;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px;
+  pointer-events: none;
+}
+
+.controls[aria-hidden='true'] {
+  visibility: hidden;
 }
 
 .track {
-	position: relative;
-	height: 4px;
-	background: rgb(10 14 18 / 62%);
+  --thumb-size: 64px;
+  position: relative;
+  height: var(--thumb-size);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.rail {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 8px;
+  background: #16191d;
+  transform: translateY(-50%);
 }
 
 .thumb {
-	position: absolute;
-	top: 50%;
-	display: block;
-	width: 58px;
-	height: 58px;
-	border: 2px solid rgb(233 233 230 / 45%);
-	border-radius: 50%;
-	background: var(--screen-dark);
-	transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: calc(
+    var(--scroll-progress) * (100% - var(--thumb-size)) + var(--thumb-size) / 2
+  );
+  display: block;
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border: 2px solid #4d545c;
+  border-radius: 50%;
+  background: var(--screen-dark);
+  transform: translate(-50%, -50%);
 }
 
 .thumb::after {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 12px;
-	height: 12px;
-	border-radius: 50%;
-	background: var(--screen-beige);
-	content: '';
-	transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--screen-beige);
+  content: '';
+  transform: translate(-50%, -50%);
 }
 
 .arrows {
-	display: flex;
-	gap: 16px;
+  display: flex;
+  gap: 16px;
+  pointer-events: auto;
 }
 
 .arrows button {
-	display: grid;
-	width: 54px;
-	height: 54px;
-	padding: 0;
-	border: 0;
-	border-radius: 50%;
-	color: var(--screen-dark);
-	background: var(--screen-beige);
-	place-items: center;
-	touch-action: manipulation;
+  display: grid;
+  width: 88px;
+  height: 88px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--screen-dark);
+  background: var(--screen-beige);
+  place-items: center;
+  touch-action: manipulation;
 }
 
 .arrows svg {
-	width: 30px;
-	height: 30px;
+  width: 48px;
+  height: 48px;
 }
 
 .arrows button:disabled {
-	opacity: 0.34;
+  opacity: 0.34;
 }
 
 .arrows button:active:not(:disabled) {
-	color: var(--screen-beige);
-	background: var(--screen-red);
+  color: var(--screen-beige);
+  background: var(--screen-red);
 }
 
+.track:focus-visible,
 .arrows button:focus-visible {
-	outline: 5px solid var(--screen-red);
-	outline-offset: 4px;
+  outline: 5px solid var(--screen-red);
+  outline-offset: 4px;
 }
 
 @media (min-width: 2560px) {
-	.list > * {
-		width: calc((100vw - 144px) / 4.85);
-		flex-basis: calc((100vw - 144px) / 4.85);
-	}
+  .list {
+    gap: 16px;
+  }
 
-	.controls {
-		height: 204px;
-		padding: 40px 144px 56px;
-		gap: 68px;
-	}
+  .list > * {
+    width: 750px;
+    flex-basis: 750px;
+  }
 
-	.track {
-		height: 8px;
-	}
+  .controls {
+    bottom: 136px;
+    height: 176px;
+    padding: 0 216px;
+    gap: 64px;
+  }
 
-	.thumb {
-		width: 116px;
-		height: 116px;
-		border-width: 4px;
-	}
+  .track {
+    --thumb-size: 128px;
+  }
 
-	.thumb::after {
-		width: 24px;
-		height: 24px;
-	}
+  .rail {
+    height: 16px;
+  }
 
-	.arrows {
-		gap: 32px;
-	}
+  .thumb {
+    border-width: 4px;
+  }
 
-	.arrows button {
-		width: 108px;
-		height: 108px;
-	}
+  .thumb::after {
+    width: 32px;
+    height: 32px;
+  }
 
-	.arrows svg {
-		width: 60px;
-		height: 60px;
-	}
+  .arrows {
+    gap: 32px;
+  }
+
+  .arrows button {
+    width: 176px;
+    height: 176px;
+  }
+
+  .arrows svg {
+    width: 96px;
+    height: 96px;
+  }
 }
 
 @media (max-width: 700px) {
-	.scroller,
-	.viewport {
-		display: block;
-		overflow: visible;
-	}
+  .scroller,
+  .viewport {
+    display: block;
+    overflow: visible;
+  }
 
-	.viewport {
-		cursor: default;
-		mask-image: none;
-		-webkit-mask-image: none;
-	}
+  .viewport {
+    cursor: default;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 
-	.list {
-		display: grid;
-		width: 100%;
-		min-width: 0;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
+  .list {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding: 0 16px 34px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 8px;
+  }
 
-	.list > * {
-		width: auto;
-	}
+  .list > * {
+    width: auto;
+  }
 
-	.controls {
-		display: none;
-	}
+  .controls {
+    display: none;
+  }
 }

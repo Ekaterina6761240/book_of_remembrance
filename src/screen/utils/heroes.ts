@@ -1,9 +1,8 @@
 import type { Hero } from '../../shared/types';
-import { getHeroFullName } from '../../shared/utils';
 
 export const RUSSIAN_ALPHABET = [
   'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П',
-  'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Ь', 'Э', 'Ю', 'Я',
+  'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю', 'Я',
 ] as const;
 
 const russianCollator = new Intl.Collator('ru-RU', {
@@ -12,15 +11,19 @@ const russianCollator = new Intl.Collator('ru-RU', {
   usage: 'sort',
 });
 
-const getHeroSearchText = (hero: Hero): string => [
-  getHeroFullName(hero),
-  [hero.firstName, hero.middleName, hero.lastName].filter(Boolean).join(' '),
-  [hero.firstName, hero.lastName].join(' '),
-  [hero.lastName, hero.firstName].join(' '),
-].join(' ');
-
 export const normalizeRussianText = (value: string): string =>
   value.trim().toLocaleUpperCase('ru-RU').replace(/Ё/g, 'Е');
+
+const matchesNamePrefixes = (hero: Hero, query: string): boolean => {
+  const queryParts = query.split(/\s+/).filter(Boolean);
+  const nameParts = [hero.lastName, hero.firstName, hero.middleName]
+    .filter((part): part is string => Boolean(part))
+    .map(normalizeRussianText);
+
+  return queryParts.every((queryPart) =>
+    nameParts.some((namePart) => namePart.startsWith(queryPart)),
+  );
+};
 
 export const compareHeroesRussian = (left: Hero, right: Hero): number => {
   const byLastName = russianCollator.compare(left.lastName.trim(), right.lastName.trim());
@@ -46,6 +49,6 @@ export const filterAndSortHeroes = (heroes: Hero[], options: HeroFilterOptions):
   return heroes
     .filter((hero) => options.districtId === null || hero.districtId === options.districtId)
     .filter((hero) => !normalizedLetter || normalizeRussianText(hero.lastName).startsWith(normalizedLetter))
-    .filter((hero) => !normalizedQuery || normalizeRussianText(getHeroSearchText(hero)).includes(normalizedQuery))
+    .filter((hero) => !normalizedQuery || matchesNamePrefixes(hero, normalizedQuery))
     .sort(compareHeroesRussian);
 };
