@@ -14,10 +14,14 @@ final class DistrictMeta {
 				'single'            => true,
 				'default'           => 0,
 				'show_in_rest'      => false,
-				'sanitize_callback' => 'intval',
+				'sanitize_callback' => array( self::class, 'sanitize_sort_order' ),
 				'auth_callback'     => array( self::class, 'can_edit' ),
 			)
 		);
+	}
+
+	public static function sanitize_sort_order( $value ): int {
+		return intval( $value );
 	}
 
 	public static function can_edit(): bool {
