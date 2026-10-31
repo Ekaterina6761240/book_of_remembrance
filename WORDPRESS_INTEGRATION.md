@@ -1,6 +1,6 @@
 # WordPress integration contract
 
-This document describes the boundary expected by the current frontend. The WordPress REST controllers, PHP enqueue code, authentication bridge, and rewrite rules are intentionally not implemented in this repository yet.
+This document describes the boundary between the frontend and the WordPress plugin implementation in this repository.
 
 ## Runtime configuration
 
@@ -8,18 +8,16 @@ The Vite variables are build-time values:
 
 | Variable | Purpose | Example |
 | --- | --- | --- |
-| `VITE_DATA_SOURCE` | Adapter set selected by the runtime composition root | `mock` or `wordpress` |
-| `VITE_API_BASE_URL` | Base URL for the future REST adapters | `/wp-json/museum/v1` |
+| `VITE_API_BASE_URL` | Base URL for the REST adapters | `/wp-json/museum/v1` |
 | `VITE_APP_BASE_PATH` | React Router basename, without a trailing slash | `/` or `/book-of-remembrance` |
 | `VITE_ASSET_BASE` | Public base used by Vite assets and the service worker | `/` or `/book-of-remembrance/` |
 | `VITE_SCREEN_IDLE_TIMEOUT_MS` | Kiosk inactivity timeout | `90000` |
 
-Development defaults to `mock` if `VITE_DATA_SOURCE` is absent. A production runtime must select the mode explicitly; it never silently falls back to mock. `src/app/providers/runtime.ts` is the single composition root for auth and all repositories. The `wordpress` branch deliberately fails until real adapters are connected there.
+All environments use the WordPress adapters. `src/app/providers/runtime.ts` is the single composition root for auth and all repositories. Local development can point `VITE_WORDPRESS_PROXY_TARGET` at the WordPress installation while keeping API requests same-origin through Vite.
 
 `VITE_APP_BASE_PATH` and `VITE_ASSET_BASE` must describe the same deployment mount. Neither value contains a domain. For a nested deployment, a representative build is:
 
 ```sh
-VITE_DATA_SOURCE=wordpress \
 VITE_APP_BASE_PATH=/book-of-remembrance \
 VITE_ASSET_BASE=/book-of-remembrance/ \
 npm run build

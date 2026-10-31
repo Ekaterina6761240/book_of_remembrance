@@ -82,8 +82,8 @@ Public list, поиск, алфавит, фильтр по району и ст�
 - Корневые frontend routes: `/screen`, `/screen/districts`, `/screen/heroes`, `/screen/heroes/:id`, `/staff`, `/staff/login`.
 - `VITE_APP_BASE_PATH` задаёт `APP_BASE_PATH`: общий mount path, React basename, SPA routes и будущий scope service worker.
 - `VITE_ASSET_BASE` определяет только публичный URL Vite build assets и не должен определять scope service worker.
-- `VITE_DATA_SOURCE=mock|wordpress` выбирается в единственной composition root `src/app/providers/runtime.ts`.
-- WordPress adapters должны подключаться только в ветке `wordpress`.
+- WordPress-адаптеры собираются в единственной composition root `src/app/providers/runtime.ts`.
+- Runtime использует только WordPress-адаптеры; тестовые данные не входят в frontend bundle.
 
 ## 3. Границы plugin
 
@@ -331,7 +331,7 @@ Response:
 }
 ```
 
-Поиск должен учитывать обе формы полного имени, как текущий mock: `фамилия имя отчество` и `имя отчество фамилия`. Рекомендуется поддерживать производное internal meta `_museum_search_text`, пересчитываемое plugin из обеих форм имени и нормализованное для поиска. Оно не является новым domain field и не принимается от клиента. Для первой версии допустим `WP_Query` с контролируемым meta search; при большом объёме нужно отдельно оценить индексируемость, не переходя автоматически к прямому SQL.
+Поиск должен учитывать обе формы полного имени: `фамилия имя отчество` и `имя отчество фамилия`. Рекомендуется поддерживать производное internal meta `_museum_search_text`, пересчитываемое plugin из обеих форм имени и нормализованное для поиска. Оно не является новым domain field и не принимается от клиента. Для первой версии допустим `WP_Query` с контролируемым meta search; при большом объёме нужно отдельно оценить индексируемость, не переходя автоматически к прямому SQL.
 
 `HeroesRepository.delete(id)` означает вызов `wp_trash_post()`. Custom REST не предоставляет `force=true` и не выполняет hard delete. После перемещения опубликованного героя в Trash public snapshot перестраивается. Hard delete в штатном React `/staff` UX не требуется.
 
@@ -523,7 +523,6 @@ Mapper обязан проверять response shape и не маскирова
 Vite создаёт `dist/manifest.json`. SPA mount и build assets являются независимыми URL. Пример production configuration:
 
 ```text
-VITE_DATA_SOURCE=wordpress
 VITE_APP_BASE_PATH=/book-of-remembrance
 VITE_ASSET_BASE=/wp-content/plugins/museum-core/public/build/
 VITE_API_BASE_URL=/wp-json/museum/v1

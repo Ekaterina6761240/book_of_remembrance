@@ -1,11 +1,3 @@
-import {
-  MockDataStore,
-  MockDistrictsRepository,
-  MockHeroesRepository,
-  MockMediaRepository,
-  MockScreenContentRepository,
-} from '../../mocks/repositories';
-import { MockAuthService } from '../../mocks/services/MockAuthService';
 import type {
   DistrictsRepository,
   HeroesRepository,
@@ -23,7 +15,6 @@ import {
   WordPressMediaRepository,
   WordPressScreenContentRepository,
 } from '../../wordpress';
-import { appConfig, type DataSourceMode } from '../config';
 import { getMuseumAppRuntimeConfig } from '../runtimeConfig';
 
 export type RepositoryContainer = {
@@ -38,25 +29,7 @@ export type RuntimeAdapters = {
   repositories: RepositoryContainer;
 };
 
-const createMockAdapters = (): RuntimeAdapters => {
-  const store = new MockDataStore();
-  const remoteScreenContent = new MockScreenContentRepository(store);
-
-  return {
-    auth: new MockAuthService(),
-    repositories: {
-      districts: new MockDistrictsRepository(store),
-      heroes: new MockHeroesRepository(store),
-      media: new MockMediaRepository(store),
-      screenContent: new OfflineScreenContentRepository(
-        remoteScreenContent,
-        new ScreenCacheService(),
-      ),
-    },
-  };
-};
-
-const createWordPressAdapters = (): RuntimeAdapters => {
+export const createRuntimeAdapters = (): RuntimeAdapters => {
   const client = new WordPressApiClient(API_BASE_URL);
   const runtimeConfig = getMuseumAppRuntimeConfig();
   if (runtimeConfig?.nonce) client.setNonce(runtimeConfig.nonce);
@@ -74,11 +47,4 @@ const createWordPressAdapters = (): RuntimeAdapters => {
       ),
     },
   };
-};
-
-export const createRuntimeAdapters = (
-  mode: DataSourceMode = appConfig.dataSource,
-): RuntimeAdapters => {
-  if (mode === 'mock') return createMockAdapters();
-  return createWordPressAdapters();
 };
