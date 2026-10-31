@@ -214,6 +214,7 @@
 
   .viewport {
     cursor: default;
+    touch-action: pan-y;
     mask-image: none;
     -webkit-mask-image: none;
   }
